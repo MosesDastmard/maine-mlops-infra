@@ -1,44 +1,51 @@
 # MLflow Helm Values
+global:
+  security:
+    allowInsecureImages: true
+
 image:
   registry: docker.io
   repository: bitnamilegacy/mlflow
   tag: "3.3.2-debian-12-r0"
 
-global:
-  compatibility:
-    allowInsecureImages: true
+# Use bitnamilegacy for init container since bitnami/os-shell requires subscription
+waitContainer:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/os-shell
+    tag: "12-debian-12-r51"
 
 tracking:
   enabled: true
   auth:
     enabled: true
     username: admin
-    password: Moses1749
+    password: Moses1749MLflow!
   service:
     type: NodePort
     ports:
       http: 5000
     nodePorts:
-      http: 30050
+      http: "30050"
   resources:
     requests:
-      memory: "256Mi"
+      memory: "512Mi"
       cpu: "200m"
     limits:
-      memory: "512Mi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "1000m"
 
-# Use existing MySQL instead of bundled PostgreSQL
+# Use bundled PostgreSQL (MLflow doesn't support MySQL)
 postgresql:
-  enabled: false
-
-externalDatabase:
-  host: mysql-primary.mlops-db.svc.cluster.local
-  port: 3306
-  user: admin
-  password: Moses1749
-  database: mlflow
-  dialect: mysql
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/postgresql
+    tag: "17.4.0-debian-12-r0"
+  auth:
+    username: mlflow
+    password: Moses1749
+    database: mlflow
 
 # Use S3-compatible storage for artifacts
 minio:
@@ -51,7 +58,7 @@ externalS3:
   bucket: mlflow
   existingSecret: mlflow-s3-credentials
   existingSecretAccessKeyIDKey: accessKeyID
-  existingSecretAccessKeySecretKey: secretAccessKey
+  existingSecretKeySecretKey: secretAccessKey
 
 run:
   enabled: false

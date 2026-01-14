@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(kubectl describe:*)"
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl get:*)",
+      "Bash(iptables:*)"
     ]
   }
 }
