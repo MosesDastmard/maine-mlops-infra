@@ -23,6 +23,7 @@ helm repo add twuni https://twuni.github.io/docker-registry.helm || true
 helm repo add jenkins https://charts.jenkins.io || true
 helm repo add argo https://argoproj.github.io/argo-helm || true
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts || true
+helm repo add strimzi https://strimzi.io/charts/ || true
 helm repo update
 
 echo "Deploying services..."
@@ -123,58 +124,49 @@ helm upgrade --install argo-workflows argo/argo-workflows \
 # Deploy Kubeflow Pipelines using official manifests (2.4.0+ uses ghcr.io images)
 KUBEFLOW_PIPELINES_VERSION="2.4.0"
 
-# Delete MinIO first if it exists (we use Contabo S3 instead)
-echo "Removing MinIO if exists (using Contabo S3 instead)..."
-kubectl delete deployment minio -n kubeflow 2>/dev/null || true
-kubectl delete service minio-service -n kubeflow 2>/dev/null || true
-
 kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=$KUBEFLOW_PIPELINES_VERSION" || true
 kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.io || true
 
-# Apply manifests with --server-side to handle conflicts, skip minio errors
-kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-emissary?ref=$KUBEFLOW_PIPELINES_VERSION" -n kubeflow --server-side --force-conflicts 2>&1 | grep -v "minio" || true
+# Apply manifests with --server-side to handle conflicts
+kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-emissary?ref=$KUBEFLOW_PIPELINES_VERSION" -n kubeflow --server-side --force-conflicts || true
 
-# Remove MinIO deployment - we use Contabo S3
-echo "Removing MinIO deployment..."
-kubectl delete deployment minio -n kubeflow --ignore-not-found=true
-kubectl delete service minio-service -n kubeflow --ignore-not-found=true
+# Patch MinIO to use official image (Kubeflow's gcr.io image is unavailable)
+kubectl set image deployment/minio minio=minio/minio:RELEASE.2023-09-04T19-57-37Z -n kubeflow 2>/dev/null || true
 
-# Create mlpipeline-minio-artifact secret for Contabo S3
+# Create mlpipeline-minio-artifact secret (overwrite with our credentials if needed)
 kubectl create secret generic mlpipeline-minio-artifact \
   --from-literal=accesskey="$(echo MjJiMGY0NmQwNmU2ZTNiNjg0MjgyNzJhZTk0NjdlNmM= | base64 -d)" \
   --from-literal=secretkey="$(echo Y2VmNTNhYjIwNThhMjlmYjc2ZGU0NzY1ZTcxY2VjZTE= | base64 -d)" \
   -n kubeflow --dry-run=client -o yaml | kubectl apply -f -
 
-# Configure ml-pipeline to use Contabo S3
-kubectl set env deployment/ml-pipeline -n kubeflow \
-  MINIO_SERVICE_SERVICE_HOST=eu2.contabostorage.com \
-  MINIO_SERVICE_SERVICE_PORT=443 \
-  MINIO_SERVICE_REGION="" \
-  MINIO_SERVICE_SECURE=true \
-  OBJECTSTORECONFIG_BUCKETNAME=kubeflow-pipelines || true
-
-kubectl set env deployment/ml-pipeline-ui -n kubeflow \
-  MINIO_HOST=eu2.contabostorage.com \
-  MINIO_PORT=443 \
-  MINIO_SSL=true \
-  MINIO_NAMESPACE=kubeflow-pipelines || true
-
-# Wait for Kubeflow Pipelines to be ready
+# Wait for Kubeflow Pipelines to be ready (use default MinIO config from manifests)
+# Note: For external S3 (Contabo), you would need to patch the configmap and secrets
+# but that requires more extensive changes. Using built-in MinIO for now.
 echo "Waiting for Kubeflow Pipelines pods to be ready..."
 kubectl wait --for=condition=ready pod -l app=ml-pipeline -n kubeflow --timeout=300s || true
 
 # Expose Kubeflow Pipelines UI via NodePort
 kubectl patch svc ml-pipeline-ui -n kubeflow -p '{"spec": {"type": "NodePort", "ports": [{"port": 80, "nodePort": 30030, "targetPort": 3000}]}}' || true
 
-# Kafka (streaming platform)
-echo "[11/13] Deploying Kafka..."
-helm upgrade --install kafka bitnami/kafka \
-  -f "$SCRIPT_DIR/helm/kafka.yml" \
-  -n mlops-stream --create-namespace
+# Kafka (streaming platform) - Using Strimzi operator (Bitnami images unavailable)
+echo "[11/13] Deploying Kafka (Strimzi)..."
+kubectl create namespace mlops-stream --dry-run=client -o yaml | kubectl apply -f -
 
-# Wait for Kafka to be ready before deploying UI
-echo "Waiting for Kafka to be ready..."
-kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=kafka -n mlops-stream --timeout=300s || true
+# Install Strimzi operator
+helm upgrade --install strimzi-operator strimzi/strimzi-kafka-operator \
+  -n mlops-stream \
+  --set watchAnyNamespace=false
+
+# Wait for Strimzi operator to be ready
+echo "Waiting for Strimzi operator..."
+kubectl wait --for=condition=ready pod -l strimzi.io/kind=cluster-operator -n mlops-stream --timeout=120s || true
+
+# Deploy Kafka cluster using Strimzi CRD
+kubectl apply -f "$SCRIPT_DIR/helm/kafka-strimzi.yml"
+
+# Wait for Kafka to be ready
+echo "Waiting for Kafka cluster to be ready..."
+kubectl wait kafka/kafka --for=condition=Ready -n mlops-stream --timeout=300s || true
 
 # Kafka UI
 echo "[12/13] Deploying Kafka UI..."

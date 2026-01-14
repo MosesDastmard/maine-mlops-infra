@@ -9,15 +9,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-# Kafka cluster connection
+# Kafka cluster connection (Strimzi uses kafka-kafka-bootstrap service name)
 yamlApplicationConfig:
   kafka:
     clusters:
       - name: mlops-kafka
-        bootstrapServers: kafka.mlops-stream.svc.cluster.local:9092
-        metrics:
-          port: 9404
-          type: JMX
+        bootstrapServers: kafka-kafka-bootstrap.mlops-stream.svc.cluster.local:9092
 
 # Authentication
 auth:

@@ -18,7 +18,8 @@
       "Bash(docker manifest:*)",
       "Bash(crictl pull:*)",
       "Bash(helm repo add:*)",
-      "Bash(helm repo update:*)"
+      "Bash(helm repo update:*)",
+      "Bash(bash:*)"
     ]
   }
 }

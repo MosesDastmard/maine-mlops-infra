@@ -10,7 +10,13 @@ helm uninstall timescaledb -n mlops-stream 2>/dev/null || true
 echo "[2/13] Removing Kafka UI..."
 helm uninstall kafka-ui -n mlops-stream 2>/dev/null || true
 
-echo "[3/13] Removing Kafka..."
+echo "[3/13] Removing Kafka (Strimzi)..."
+# Delete Kafka cluster CR first
+kubectl delete kafka kafka -n mlops-stream 2>/dev/null || true
+kubectl delete kafkanodepool dual-role -n mlops-stream 2>/dev/null || true
+# Uninstall Strimzi operator
+helm uninstall strimzi-operator -n mlops-stream 2>/dev/null || true
+# Also try removing Bitnami kafka if it exists (for backwards compatibility)
 helm uninstall kafka -n mlops-stream 2>/dev/null || true
 kubectl delete pvc -n mlops-stream --all --force 2>/dev/null || true
 

@@ -2,10 +2,14 @@
 # Time-series database for storing sales data from Kafka
 
 # Using Bitnami PostgreSQL with TimescaleDB extension
+global:
+  security:
+    allowInsecureImages: true
+
 image:
   registry: docker.io
-  repository: timescale/timescaledb-ha
-  tag: pg16-ts2.17-all
+  repository: timescale/timescaledb
+  tag: latest-pg16
 
 # Authentication
 auth:
@@ -16,6 +20,12 @@ auth:
 
 # Primary configuration
 primary:
+  extraVolumes:
+    - name: postgresql-run
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: postgresql-run
+      mountPath: /var/run/postgresql
   persistence:
     enabled: true
     storageClass: local-path
