@@ -8,7 +8,17 @@
       "Bash(kubectl:*)",
       "Bash(kubectl delete:*)",
       "Bash(kubectl apply:*)",
-      "Bash(kubectl set env:*)"
+      "Bash(kubectl set env:*)",
+      "Bash(helm search repo:*)",
+      "Bash(helm uninstall:*)",
+      "Bash(helm install:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(skopeo list-tags:*)",
+      "Bash(docker manifest:*)",
+      "Bash(crictl pull:*)",
+      "Bash(helm repo add:*)",
+      "Bash(helm repo update:*)"
     ]
   }
 }
