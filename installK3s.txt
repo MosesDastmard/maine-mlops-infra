@@ -1,0 +1,25 @@
+curl -sfL https://get.k3s.io | sh -
+
+sudo systemctl status k3s  # Check status
+
+
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+mkdir ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(whoami) ~/.kube/config
+chmod 600 ~/.kube/config
+
+
+# join agents
+curl -sfL https://get.k3s.io | K3S_URL=https://<your-server-ip>:6443 \
+    K3S_TOKEN=<token-from-server> \
+    sh -
+
+curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.2:6443 \
+    K3S_TOKEN=K108fe98ae57e25d47e9617fc109508c44cbe633c0ab1d5c306e3b49a19f3feb105::server:f2284ca3281571de8c132e43652d2eed \
+    sh -
+
+
+kubectl get nodes
+kubectl get pods -A

@@ -1,0 +1,33 @@
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 7d
+    retentionSize: 18GB
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 20Gi
+
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: false  # We'll install Grafana separately
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true  # This monitors node resource usage
+
+prometheus-node-exporter:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"

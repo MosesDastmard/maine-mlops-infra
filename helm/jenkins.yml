@@ -1,0 +1,28 @@
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 20Gi
+  accessMode: ReadWriteOnce
+
+controller:
+  serviceType: NodePort
+  nodePort: 30080
+  admin:
+    username: admin
+    password: Moses1749
+
+agent:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: jenkins/inbound-agent
+    tag: 4.13-1
+  resources:
+    requests:
+      cpu: "2"         # 2 CPU cores requested
+      memory: "4Gi"    # 4GB memory requested
+    limits:
+      cpu: "4"         # 4 CPU cores limit
+      memory: "8Gi"    # 8GB memory limit
+  # Optional: Add custom JVM options for the agent
+  javaOpts: "-Xmx2g -Xms1g"

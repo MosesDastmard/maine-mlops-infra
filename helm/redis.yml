@@ -1,0 +1,70 @@
+# helm/redis.yaml - Simple, non-Sentinel Redis, NO persistent disk
+
+architecture: replication
+
+image:
+  registry: docker.io
+  repository: bitnamilegacy/redis
+  tag: "8.2.1-debian-12-r0"
+
+metrics:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/redis-exporter
+    tag: "1.60.0-debian-12-r0"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+# Disable all extra init containers
+volumePermissions:
+  enabled: false
+
+sysctlImage:
+  enabled: false
+
+# Master: no persistent volume
+master:
+  persistence:
+    enabled: false  # 👈 DISABLED
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Replica: also disable persistence
+replica:
+  replicaCount: 1
+  persistence:
+    enabled: false  # 👈 DISABLED
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+# Disable Sentinel (already off, but keep for clarity)
+sentinel:
+  enabled: false
+
+global:
+  compatibility:
+    allowInsecureImages: true
+
+# Disable auth (OK in private cluster)
+auth:
+  enabled: false
+
+# helm uninstall redis-api -n lappe-api-db
+# helm install redis-api oci://registry-1.docker.io/bitnamicharts/redis -f helm/redis.yaml -n lappe-api-db
+# kubectl describe pod redis-api-node-0 -n lappe-api-db

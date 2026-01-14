@@ -1,0 +1,57 @@
+# MLflow Helm Values
+image:
+  registry: docker.io
+  repository: bitnamilegacy/mlflow
+  tag: "3.3.2-debian-12-r0"
+
+global:
+  compatibility:
+    allowInsecureImages: true
+
+tracking:
+  enabled: true
+  auth:
+    enabled: true
+    username: admin
+    password: Moses1749
+  service:
+    type: NodePort
+    ports:
+      http: 5000
+    nodePorts:
+      http: 30050
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Use existing MySQL instead of bundled PostgreSQL
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: mysql-primary.mlops-db.svc.cluster.local
+  port: 3306
+  user: admin
+  password: Moses1749
+  database: mlflow
+  dialect: mysql
+
+# Use S3-compatible storage for artifacts
+minio:
+  enabled: false
+
+externalS3:
+  protocol: https
+  host: eu2.contabostorage.com
+  port: 443
+  bucket: mlflow
+  existingSecret: mlflow-s3-credentials
+  existingSecretAccessKeyIDKey: accessKeyID
+  existingSecretAccessKeySecretKey: secretAccessKey
+
+run:
+  enabled: false

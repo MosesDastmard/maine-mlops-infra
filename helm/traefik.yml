@@ -1,0 +1,32 @@
+deployment:
+  replicas: 1
+
+ports:
+  web:
+    # Expose HTTP port
+    port: 80
+    expose:
+      default: true    # must be an object, not boolean
+  websecure:
+    # Expose HTTPS port
+    port: 443
+    expose:
+      default: true    # must be an object, not boolean
+  mongo:
+    port: 27017
+    expose:
+      default: true    # must be an object, not boolean
+    protocol: TCP
+  mysql:
+    port: 3306
+    expose:
+      default: true
+    protocol: TCP
+
+additionalArguments:
+  - "--certificatesresolvers.le.acme.email=moses.dastmard@gmail.com"
+  - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+  - "--certificatesresolvers.le.acme.tlschallenge=true"
+
+service:
+  type: LoadBalancer

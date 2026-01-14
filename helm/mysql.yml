@@ -1,0 +1,48 @@
+# helm/mysql.api.yaml - CORRECTED
+architecture: replication
+auth:
+  rootPassword: "Moses1749"
+  username: "admin"
+  password: "Moses1749"
+  replicationPassword: "Moses1749"
+
+# CRITICAL: Use the legacy repository
+image:
+  registry: docker.io
+  repository: bitnamilegacy/mysql  # ✅ MUST use bitnamilegacy
+  tag: "9.4.0-debian-12-r1"  # This tag EXISTS in legacy repo
+
+primary:
+  persistence:
+    enabled: true
+    storageClass: "local-path"
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  service:
+    type: NodePort
+    nodePorts:
+      mysql: 30306
+
+secondary:
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: "local-path"
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+# Fix metrics exporter
+metrics:
+  enabled: false
