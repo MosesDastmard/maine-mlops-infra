@@ -3,7 +3,12 @@
     "allow": [
       "Bash(kubectl describe:*)",
       "Bash(kubectl get:*)",
-      "Bash(iptables:*)"
+      "Bash(iptables:*)",
+      "Bash(kubectl set image:*)",
+      "Bash(kubectl:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl apply:*)",
+      "Bash(kubectl set env:*)"
     ]
   }
 }

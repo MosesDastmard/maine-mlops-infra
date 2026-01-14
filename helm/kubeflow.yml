@@ -1,0 +1,168 @@
+# Kubeflow Pipelines Helm Values
+# Uses the official Kubeflow Pipelines standalone deployment
+
+# Pipeline configuration
+pipeline:
+  enabled: true
+
+# Use MinIO for artifact storage (will configure to use external S3)
+minio:
+  enabled: false
+
+# Object store configuration (S3-compatible)
+objectStore:
+  host: eu2.contabostorage.com
+  port: 443
+  secure: true
+  bucket: kubeflow-pipelines
+  region: ""
+  accessKey: ""  # Will be provided via secret
+  secretKey: ""  # Will be provided via secret
+  existingSecret: kubeflow-s3-credentials
+  existingSecretAccessKeyKey: accessKeyID
+  existingSecretSecretKeyKey: secretAccessKey
+
+# MySQL for metadata store (bundled MySQL)
+mysql:
+  enabled: true
+  auth:
+    rootPassword: Moses1749
+    database: kubeflow_pipelines
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 10Gi
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+
+# API Server configuration
+apiServer:
+  image:
+    repository: gcr.io/ml-pipeline/api-server
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  service:
+    type: NodePort
+    port: 8888
+    nodePort: 30088
+
+# Persistence Agent
+persistenceAgent:
+  image:
+    repository: gcr.io/ml-pipeline/persistenceagent
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+# Scheduled Workflow controller
+scheduledWorkflow:
+  image:
+    repository: gcr.io/ml-pipeline/scheduledworkflow
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+# UI configuration
+ui:
+  image:
+    repository: gcr.io/ml-pipeline/frontend
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+  service:
+    type: NodePort
+    port: 3000
+    nodePort: 30030
+
+# Viewer CRD controller
+viewerCrdController:
+  image:
+    repository: gcr.io/ml-pipeline/viewer-crd-controller
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+# Visualization Server
+visualizationServer:
+  image:
+    repository: gcr.io/ml-pipeline/visualization-server
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+# Metadata components
+metadata:
+  envoy:
+    image:
+      repository: gcr.io/ml-pipeline/metadata-envoy
+      tag: 2.3.0
+  writer:
+    image:
+      repository: gcr.io/ml-pipeline/metadata-writer
+      tag: 2.3.0
+  grpcServer:
+    image:
+      repository: gcr.io/ml-pipeline/mlmd-grpc-server
+      tag: 2.3.0
+
+# Cache server
+cacheServer:
+  image:
+    repository: gcr.io/ml-pipeline/cache-server
+    tag: 2.3.0
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "100m"
+
+# Argo Workflows (required for pipeline execution)
+argo:
+  enabled: true
+  controller:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
