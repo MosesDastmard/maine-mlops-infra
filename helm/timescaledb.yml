@@ -16,10 +16,13 @@ auth:
   postgresPassword: Moses1749TimescaleAdmin!
   username: mlops
   password: Moses1749Timescale!
-  database: sales_timeseries
 
 # Primary configuration
 primary:
+  service:
+    type: NodePort
+    nodePorts:
+      postgresql: "30432"
   extraVolumes:
     - name: postgresql-run
       emptyDir: {}
@@ -51,44 +54,6 @@ primary:
     wal_buffers = 64MB
     min_wal_size = 512MB
     max_wal_size = 2GB
-  initdb:
-    scripts:
-      init-timescaledb.sql: |
-        -- Enable TimescaleDB extension
-        CREATE EXTENSION IF NOT EXISTS timescaledb;
-
-        -- Create sales data hypertable
-        CREATE TABLE IF NOT EXISTS sales_data (
-          time TIMESTAMPTZ NOT NULL,
-          store_id VARCHAR(50) NOT NULL,
-          region VARCHAR(100) NOT NULL,
-          product_id VARCHAR(50) NOT NULL,
-          quantity INTEGER NOT NULL,
-          price DECIMAL(10,2) NOT NULL,
-          total DECIMAL(12,2) NOT NULL
-        );
-
-        -- Convert to hypertable partitioned by time
-        SELECT create_hypertable('sales_data', 'time', if_not_exists => TRUE);
-
-        -- Create indexes for common query patterns
-        CREATE INDEX IF NOT EXISTS idx_sales_store ON sales_data (store_id, time DESC);
-        CREATE INDEX IF NOT EXISTS idx_sales_region ON sales_data (region, time DESC);
-        CREATE INDEX IF NOT EXISTS idx_sales_product ON sales_data (product_id, time DESC);
-
-        -- Set compression policy (compress chunks older than 7 days)
-        SELECT add_compression_policy('sales_data', INTERVAL '7 days', if_not_exists => TRUE);
-
-        -- Set retention policy (drop chunks older than 2 years)
-        SELECT add_retention_policy('sales_data', INTERVAL '2 years', if_not_exists => TRUE);
-
-# Service configuration
-service:
-  type: NodePort
-  ports:
-    postgresql: 5432
-  nodePorts:
-    postgresql: "30432"
 
 # Disable replication for single-node setup
 architecture: standalone
