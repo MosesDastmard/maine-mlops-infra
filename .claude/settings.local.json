@@ -19,7 +19,8 @@
       "Bash(crictl pull:*)",
       "Bash(helm repo add:*)",
       "Bash(helm repo update:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(sudo systemctl restart:*)"
     ]
   }
 }

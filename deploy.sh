@@ -168,6 +168,14 @@ kubectl apply -f "$SCRIPT_DIR/helm/kafka-strimzi.yml"
 echo "Waiting for Kafka cluster to be ready..."
 kubectl wait kafka/kafka --for=condition=Ready -n mlops-stream --timeout=300s || true
 
+# Deploy Kafka Connect (Strimzi)
+echo "[11b/13] Deploying Kafka Connect..."
+kubectl apply -f "$SCRIPT_DIR/data/ingestion/consumer/kafka-connect.yml"
+
+# Wait for Kafka Connect to be ready (build takes time)
+echo "Waiting for Kafka Connect to build and start..."
+kubectl wait kafkaconnect/kafka-connect --for=condition=Ready -n mlops-stream --timeout=600s || true
+
 # Kafka UI
 echo "[12/13] Deploying Kafka UI..."
 helm upgrade --install kafka-ui kafka-ui/kafka-ui \

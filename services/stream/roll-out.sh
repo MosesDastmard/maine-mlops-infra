@@ -1,0 +1,1 @@
+kubectl rollout restart deployment/services-stream-consumer -n services-stream

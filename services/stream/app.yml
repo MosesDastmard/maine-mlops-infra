@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: services-stream-consumer
+  namespace: services-stream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: services-stream-consumer
+  template:
+    metadata:
+      labels:
+        app: services-stream-consumer
+    spec:
+      containers:
+      - name: api
+        image: dastmard/maine-stream-consumer:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: "2000m"
+            memory: "4Gi"
+          limits:
+            cpu: "4000m"
+            memory: "8Gi"
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: NODE_ENV
+          value: "production"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-kafka-bootstrap.mlops-stream.svc.cluster.local:9092"
+        - name: KAFKA_TOPIC
+          value: "maine-sales"
+        - name: DB_HOST
+          value: "timescaledb-postgresql.mlops-stream.svc.cluster.local"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "maine"
+        - name: DB_USER
+          value: "mlops"
+        - name: DB_PASSWORD
+          value: "Moses1749Timescale!"
+        - name: TABLE_NAME
+          value: "historical.sales"
+        - name: DEBUG
+          value: "false"
