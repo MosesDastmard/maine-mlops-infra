@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://charts.jenkins.io
     chart: jenkins
-    targetRevision: 5.8.3
+    targetRevision: 5.8.117
     helm:
       releaseName: jenkins
       values: |
@@ -28,18 +28,14 @@ spec:
           admin:
             username: admin
             password: Moses1749
-          installPlugins:
-            - kubernetes:latest
-            - workflow-aggregator:latest
-            - git:latest
-            - configuration-as-code:latest
+          installPlugins: false
 
         agent:
           enabled: true
           image:
             registry: docker.io
             repository: jenkins/inbound-agent
-            tag: 4.13-1
+            tag: 3345.va_ca_72ea_ce92f-1
           resources:
             requests:
               cpu: "2"
