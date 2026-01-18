@@ -15,7 +15,6 @@ spec:
     targetRevision: 32.1.1
     helm:
       releaseName: traefik
-      valueFiles: []
       values: |
         deployment:
           replicas: 1
