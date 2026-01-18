@@ -1,0 +1,72 @@
+# ArgoCD Application: Kafka UI
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-ui
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://provectus.github.io/kafka-ui-charts
+    chart: kafka-ui
+    targetRevision: 0.7.6
+    helm:
+      releaseName: kafka-ui
+      values: |
+        replicaCount: 1
+
+        image:
+          registry: docker.io
+          repository: provectuslabs/kafka-ui
+          tag: latest
+          pullPolicy: IfNotPresent
+
+        yamlApplicationConfig:
+          kafka:
+            clusters:
+              - name: mlops-kafka
+                bootstrapServers: kafka-kafka-bootstrap.mlops-stream.svc.cluster.local:9092
+
+        auth:
+          type: LOGIN_FORM
+          config:
+            users:
+              - username: admin
+                password: Moses1749KafkaUI!
+                role: ADMIN
+
+        service:
+          type: NodePort
+          port: 8080
+          nodePort: 30091
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+        env:
+          - name: DYNAMIC_CONFIG_ENABLED
+            value: "true"
+          - name: AUTH_TYPE
+            value: "LOGIN_FORM"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-stream
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

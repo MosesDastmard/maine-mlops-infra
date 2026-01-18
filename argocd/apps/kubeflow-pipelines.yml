@@ -1,0 +1,39 @@
+# ArgoCD Application: Kubeflow Pipelines
+# Uses Kustomize to deploy from official Kubeflow manifests
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-pipelines
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: mlops-infrastructure
+
+  # Deploy cluster-scoped resources first
+  source:
+    repoURL: https://github.com/kubeflow/pipelines.git
+    targetRevision: 2.4.0
+    path: manifests/kustomize/env/platform-agnostic-emissary
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+
+  syncPolicy:
+    automated:
+      prune: false  # Don't prune - Kubeflow has complex dependencies
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: minio
+      jqPathExpressions:
+        - .spec.template.spec.containers[].image

@@ -1,0 +1,89 @@
+# ArgoCD Application: Docker Registry
+# Note: Requires pre-created secrets (registry-s3-credentials, registry-auth)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: registry
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://twuni.github.io/docker-registry.helm
+    chart: docker-registry
+    targetRevision: 2.2.3
+    helm:
+      releaseName: registry
+      values: |
+        image:
+          repository: registry
+          tag: 2.8.3
+
+        service:
+          type: NodePort
+          port: 5000
+          nodePort: 30500
+
+        ingress:
+          enabled: false
+
+        persistence:
+          enabled: false
+
+        s3:
+          region: eu-central-1
+          regionEndpoint: https://eu2.contabostorage.com
+          bucket: registry
+          rootdirectory: /
+          encrypt: true
+          secure: true
+
+        secrets:
+          s3:
+            secretRef: "registry-s3-credentials"
+
+        env:
+          REGISTRY_AUTH: htpasswd
+          REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+          REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+          REGISTRY_STORAGE_DELETE_ENABLED: "true"
+
+        extraVolumes:
+          - name: auth
+            secret:
+              secretName: registry-auth
+
+        extraVolumeMounts:
+          - name: auth
+            mountPath: /auth
+            readOnly: true
+
+        configData: {}
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+
+        podSecurityContext:
+          fsGroup: 1000
+
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: container-registry
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

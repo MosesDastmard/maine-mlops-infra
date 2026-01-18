@@ -1,0 +1,60 @@
+# ArgoCD Application: Traefik Ingress Controller
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://traefik.github.io/charts
+    chart: traefik
+    targetRevision: 32.1.1
+    helm:
+      releaseName: traefik
+      valueFiles: []
+      values: |
+        deployment:
+          replicas: 1
+
+        ports:
+          web:
+            port: 80
+            expose:
+              default: true
+          websecure:
+            port: 443
+            expose:
+              default: true
+          mongo:
+            port: 27017
+            expose:
+              default: true
+            protocol: TCP
+          mysql:
+            port: 3306
+            expose:
+              default: true
+            protocol: TCP
+
+        additionalArguments:
+          - "--certificatesresolvers.le.acme.email=moses.dastmard@gmail.com"
+          - "--certificatesresolvers.le.acme.storage=/data/acme.json"
+          - "--certificatesresolvers.le.acme.tlschallenge=true"
+
+        service:
+          type: LoadBalancer
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

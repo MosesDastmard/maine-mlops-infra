@@ -1,0 +1,93 @@
+# ArgoCD Application: MLflow
+# Note: Requires pre-created secret (mlflow-s3-credentials)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlflow
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: mlflow
+    targetRevision: 2.1.4
+    helm:
+      releaseName: mlflow
+      values: |
+        global:
+          security:
+            allowInsecureImages: true
+
+        image:
+          registry: docker.io
+          repository: bitnamilegacy/mlflow
+          tag: "3.3.2-debian-12-r0"
+
+        waitContainer:
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/os-shell
+            tag: "12-debian-12-r51"
+
+        tracking:
+          enabled: true
+          auth:
+            enabled: true
+            username: admin
+            password: Moses1749MLflow!
+          service:
+            type: NodePort
+            ports:
+              http: 5000
+            nodePorts:
+              http: "30050"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+
+        postgresql:
+          enabled: true
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/postgresql
+            tag: "17.4.0-debian-12-r0"
+          auth:
+            username: mlflow
+            password: Moses1749
+            database: mlflow
+
+        minio:
+          enabled: false
+
+        externalS3:
+          protocol: https
+          host: eu2.contabostorage.com
+          port: 443
+          bucket: mlflow
+          existingSecret: mlflow-s3-credentials
+          existingSecretAccessKeyIDKey: accessKeyID
+          existingSecretKeySecretKey: secretAccessKey
+
+        run:
+          enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ml
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

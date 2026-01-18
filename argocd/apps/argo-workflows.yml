@@ -1,0 +1,52 @@
+# ArgoCD Application: Argo Workflows (for Kubeflow Pipelines)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-workflows
+    targetRevision: 0.45.1
+    helm:
+      releaseName: argo-workflows
+      values: |
+        server:
+          extraArgs:
+            - --auth-mode=server
+
+        controller:
+          workflowNamespaces:
+            - kubeflow
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        workflow:
+          serviceAccount:
+            create: true
+          rbac:
+            create: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

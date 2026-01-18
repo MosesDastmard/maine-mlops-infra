@@ -1,0 +1,82 @@
+# ArgoCD Project: MLOps Infrastructure
+# Groups all infrastructure services under a single project with appropriate permissions
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: mlops-infrastructure
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: MLOps Infrastructure Services
+
+  # Source repositories - update with your actual repository URL
+  sourceRepos:
+    - '*'  # Allow all repos initially, restrict to your repo URL in production
+
+  # Destination clusters and namespaces
+  destinations:
+    # System namespace
+    - namespace: kube-system
+      server: https://kubernetes.default.svc
+    # Database namespace
+    - namespace: mlops-db
+      server: https://kubernetes.default.svc
+    # Monitoring namespace
+    - namespace: mlops-mon
+      server: https://kubernetes.default.svc
+    # CI/CD namespace
+    - namespace: mlops-ci
+      server: https://kubernetes.default.svc
+    # ML namespace
+    - namespace: mlops-ml
+      server: https://kubernetes.default.svc
+    # Kubeflow namespace
+    - namespace: kubeflow
+      server: https://kubernetes.default.svc
+    # Container registry namespace
+    - namespace: container-registry
+      server: https://kubernetes.default.svc
+    # Streaming namespace
+    - namespace: mlops-stream
+      server: https://kubernetes.default.svc
+    # Custom services namespace
+    - namespace: services-stream
+      server: https://kubernetes.default.svc
+
+  # Cluster resource allow list
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+
+  # Namespace resource allow list (allow all by default)
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  # Orphaned resources monitoring
+  orphanedResources:
+    warn: true
+
+  # Role definitions for project access
+  roles:
+    - name: admin
+      description: Full access to all applications in this project
+      policies:
+        - p, proj:mlops-infrastructure:admin, applications, *, mlops-infrastructure/*, allow
+      groups:
+        - mlops-admins
+
+    - name: developer
+      description: Read-only access with sync permissions
+      policies:
+        - p, proj:mlops-infrastructure:developer, applications, get, mlops-infrastructure/*, allow
+        - p, proj:mlops-infrastructure:developer, applications, sync, mlops-infrastructure/*, allow
+      groups:
+        - mlops-developers

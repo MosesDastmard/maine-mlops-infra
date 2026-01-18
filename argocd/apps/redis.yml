@@ -1,0 +1,89 @@
+# ArgoCD Application: Redis
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: redis
+    targetRevision: 20.6.2
+    helm:
+      releaseName: redis
+      values: |
+        architecture: replication
+
+        image:
+          registry: docker.io
+          repository: bitnamilegacy/redis
+          tag: "8.2.1-debian-12-r0"
+
+        metrics:
+          enabled: true
+          image:
+            registry: docker.io
+            repository: bitnamilegacy/redis-exporter
+            tag: "1.60.0-debian-12-r0"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+
+        volumePermissions:
+          enabled: false
+
+        sysctlImage:
+          enabled: false
+
+        master:
+          persistence:
+            enabled: false
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        replica:
+          replicaCount: 1
+          persistence:
+            enabled: false
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
+        sentinel:
+          enabled: false
+
+        global:
+          compatibility:
+            allowInsecureImages: true
+
+        auth:
+          enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-db
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

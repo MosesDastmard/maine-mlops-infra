@@ -1,0 +1,88 @@
+# ArgoCD Application: TimescaleDB
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: timescaledb
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 16.4.3
+    helm:
+      releaseName: timescaledb
+      values: |
+        global:
+          security:
+            allowInsecureImages: true
+
+        image:
+          registry: docker.io
+          repository: timescale/timescaledb
+          tag: latest-pg16
+
+        auth:
+          postgresPassword: Moses1749TimescaleAdmin!
+          username: mlops
+          password: Moses1749Timescale!
+
+        primary:
+          service:
+            type: NodePort
+            nodePorts:
+              postgresql: "30432"
+          extraVolumes:
+            - name: postgresql-run
+              emptyDir: {}
+          extraVolumeMounts:
+            - name: postgresql-run
+              mountPath: /var/run/postgresql
+          persistence:
+            enabled: true
+            storageClass: local-path
+            size: 50Gi
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          extendedConfiguration: |
+            shared_preload_libraries = 'timescaledb'
+            timescaledb.telemetry_level = 'off'
+            max_connections = 200
+            shared_buffers = 1GB
+            effective_cache_size = 3GB
+            maintenance_work_mem = 512MB
+            work_mem = 32MB
+            max_parallel_workers_per_gather = 2
+            max_parallel_workers = 4
+            wal_buffers = 64MB
+            min_wal_size = 512MB
+            max_wal_size = 2GB
+
+        architecture: standalone
+
+        metrics:
+          enabled: true
+          serviceMonitor:
+            enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-stream
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

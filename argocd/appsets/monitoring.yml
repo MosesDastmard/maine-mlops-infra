@@ -1,0 +1,55 @@
+# ApplicationSet: Monitoring Services
+# Groups Prometheus and Grafana
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: monitoring
+  namespace: mlops-ci
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - name: prometheus
+            chart: kube-prometheus-stack
+            repoURL: https://prometheus-community.github.io/helm-charts
+            targetRevision: "66.3.1"
+            namespace: mlops-mon
+            valuesFile: helm/prometheus.yml
+          - name: grafana
+            chart: grafana
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "11.5.2"
+            namespace: mlops-mon
+            valuesFile: helm/grafana.yml
+
+  template:
+    metadata:
+      name: '{{ .name }}'
+      namespace: mlops-ci
+      labels:
+        app.kubernetes.io/component: monitoring
+    spec:
+      project: mlops-infrastructure
+      sources:
+        - repoURL: '{{ .repoURL }}'
+          chart: '{{ .chart }}'
+          targetRevision: '{{ .targetRevision }}'
+          helm:
+            releaseName: '{{ .name }}'
+            valueFiles:
+              - '$values/{{ .valuesFile }}'
+        - repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .namespace }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

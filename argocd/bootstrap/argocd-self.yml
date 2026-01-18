@@ -1,0 +1,44 @@
+# ArgoCD Self-Management Application
+# Allows ArgoCD to manage its own configuration via GitOps
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
+    targetRevision: 7.7.7
+    helm:
+      releaseName: argocd
+      valueFiles:
+        - $values/helm/argocd.yml
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: 7.7.7
+      helm:
+        releaseName: argocd
+        valueFiles:
+          - $values/helm/argocd.yml
+    # Reference your repository for values file
+    - repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+      targetRevision: HEAD
+      ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ci
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -1,0 +1,70 @@
+# ApplicationSet: Database Services
+# Groups all database-related applications for easier management
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: databases
+  namespace: mlops-ci
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - name: mongodb
+            chart: mongodb
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "16.4.6"
+            namespace: mlops-db
+            valuesFile: helm/mongo.yml
+          - name: mysql
+            chart: mysql
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "12.2.2"
+            namespace: mlops-db
+            valuesFile: helm/mysql.yml
+          - name: redis
+            chart: redis
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "20.6.2"
+            namespace: mlops-db
+            valuesFile: helm/redis.yml
+
+  template:
+    metadata:
+      name: '{{ .name }}'
+      namespace: mlops-ci
+      labels:
+        app.kubernetes.io/component: database
+    spec:
+      project: mlops-infrastructure
+      source:
+        repoURL: '{{ .repoURL }}'
+        chart: '{{ .chart }}'
+        targetRevision: '{{ .targetRevision }}'
+        helm:
+          releaseName: '{{ .name }}'
+          # Values from local repository
+          valueFiles:
+            - '$values/{{ .valuesFile }}'
+      sources:
+        - repoURL: '{{ .repoURL }}'
+          chart: '{{ .chart }}'
+          targetRevision: '{{ .targetRevision }}'
+          helm:
+            releaseName: '{{ .name }}'
+            valueFiles:
+              - '$values/{{ .valuesFile }}'
+        - repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .namespace }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

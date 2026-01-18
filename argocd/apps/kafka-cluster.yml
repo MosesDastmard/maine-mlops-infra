@@ -1,0 +1,40 @@
+# ArgoCD Application: Kafka Cluster (Strimzi CRD)
+# Depends on strimzi-operator being deployed first
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-cluster
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    # Reference the local repository for Kafka Strimzi manifests
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+    targetRevision: HEAD
+    path: helm
+    directory:
+      include: 'kafka-strimzi.yml'
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-stream
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+
+  # Health assessment for Strimzi Kafka
+  ignoreDifferences:
+    - group: kafka.strimzi.io
+      kind: Kafka
+      jqPathExpressions:
+        - .status

@@ -1,0 +1,57 @@
+# ArgoCD Application: Jenkins
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.jenkins.io
+    chart: jenkins
+    targetRevision: 5.8.3
+    helm:
+      releaseName: jenkins
+      values: |
+        persistence:
+          enabled: true
+          storageClass: local-path
+          size: 20Gi
+          accessMode: ReadWriteOnce
+
+        controller:
+          serviceType: NodePort
+          nodePort: 30080
+          admin:
+            username: admin
+            password: Moses1749
+
+        agent:
+          enabled: true
+          image:
+            registry: docker.io
+            repository: jenkins/inbound-agent
+            tag: 4.13-1
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "4"
+              memory: "8Gi"
+          javaOpts: "-Xmx2g -Xms1g"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ci
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

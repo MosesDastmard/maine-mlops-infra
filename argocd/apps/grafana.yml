@@ -1,0 +1,73 @@
+# ArgoCD Application: Grafana
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: grafana
+    targetRevision: 11.5.2
+    helm:
+      releaseName: grafana
+      values: |
+        admin:
+          user: admin
+          password: Moses1749
+
+        image:
+          registry: docker.io
+          repository: bitnamilegacy/grafana
+          tag: "12.1.1-debian-12-r0"
+
+        grafana:
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        global:
+          compatibility:
+            allowInsecureImages: true
+
+        persistence:
+          enabled: true
+          storageClassName: local-path
+          size: 5Gi
+
+        datasources:
+          secretDefinition:
+            apiVersion: 1
+            datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-kube-prometheus-prometheus.mlops-mon.svc.cluster.local:9090
+              access: proxy
+              isDefault: true
+
+        service:
+          type: NodePort
+          ports:
+            grafana: 3000
+          nodePorts:
+            grafana: 30000
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-mon
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

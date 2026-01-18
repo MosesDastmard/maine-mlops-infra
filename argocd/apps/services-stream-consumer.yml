@@ -1,0 +1,36 @@
+# ArgoCD Application: Services Stream Consumer
+# Custom application deployed from local repository
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: services-stream-consumer
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  project: mlops-applications
+
+  source:
+    # Reference the local repository - UPDATE with your actual repo URL
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+    targetRevision: HEAD
+    path: services/stream
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: services-stream
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+
+  # Enable image updater annotations if using ArgoCD Image Updater
+  # annotations:
+  #   argocd-image-updater.argoproj.io/image-list: consumer=dastmard/maine-stream-consumer
+  #   argocd-image-updater.argoproj.io/consumer.update-strategy: latest

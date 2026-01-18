@@ -1,0 +1,99 @@
+# ArgoCD Application: LakeFS
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lakefs
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.lakefs.io
+    chart: lakefs
+    targetRevision: 1.3.4
+    helm:
+      releaseName: lakefs
+      values: |
+        replicaCount: 1
+
+        image:
+          pullPolicy: IfNotPresent
+
+        service:
+          type: NodePort
+          port: 80
+          nodePort: 30100
+
+        secrets:
+          databaseConnectionString: "postgres://lakefs:Moses1749@lakefs-postgresql:5432/lakefs?sslmode=disable"
+          authEncryptSecretKey: "Moses1749LakeFSAuthEncryptKey32!"
+
+        lakefsConfig: |
+          database:
+            type: postgres
+          blockstore:
+            type: s3
+            s3:
+              endpoint: https://eu2.contabostorage.com
+              force_path_style: true
+              credentials:
+                access_key_id: 22b0f46d06e6e3b68428272ae9467e6c
+                secret_access_key: cef53ab2058a29fb76de4765e71cece1
+          auth:
+            encrypt:
+              secret_key: Moses1749LakeFSAuthEncryptKey32!
+            ui_config:
+              login_cookie_names:
+                - internal_auth_session
+
+        useDevPostgres: true
+
+        postgresql:
+          enabled: true
+          auth:
+            username: lakefs
+            password: Moses1749
+            database: lakefs
+          primary:
+            persistence:
+              enabled: true
+              storageClass: local-path
+              size: 10Gi
+
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+        livenessProbe:
+          httpGet:
+            path: /_health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /_health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ml
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

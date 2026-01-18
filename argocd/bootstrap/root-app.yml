@@ -1,0 +1,29 @@
+# Root Application: App of Apps Pattern
+# This single application deploys all other applications
+# Apply this once to bootstrap the entire infrastructure
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mlops-root
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default  # Use default project for root app
+
+  source:
+    # UPDATE THIS with your actual repository URL
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+    targetRevision: HEAD
+    path: argocd/bootstrap/apps
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ci
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

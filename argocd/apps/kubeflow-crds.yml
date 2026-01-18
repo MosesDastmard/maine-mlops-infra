@@ -1,0 +1,31 @@
+# ArgoCD Application: Kubeflow CRDs (cluster-scoped resources)
+# Must be deployed before kubeflow-pipelines
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-crds
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://github.com/kubeflow/pipelines.git
+    targetRevision: 2.4.0
+    path: manifests/kustomize/cluster-scoped-resources
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Replace=true

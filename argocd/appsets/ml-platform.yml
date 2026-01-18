@@ -1,0 +1,55 @@
+# ApplicationSet: ML Platform Services
+# Groups MLflow and LakeFS
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: ml-platform
+  namespace: mlops-ci
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - name: mlflow
+            chart: mlflow
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "2.1.4"
+            namespace: mlops-ml
+            valuesFile: helm/mlflow.yml
+          - name: lakefs
+            chart: lakefs
+            repoURL: https://charts.lakefs.io
+            targetRevision: "1.3.4"
+            namespace: mlops-ml
+            valuesFile: helm/lakefs.yml
+
+  template:
+    metadata:
+      name: '{{ .name }}'
+      namespace: mlops-ci
+      labels:
+        app.kubernetes.io/component: ml-platform
+    spec:
+      project: mlops-infrastructure
+      sources:
+        - repoURL: '{{ .repoURL }}'
+          chart: '{{ .chart }}'
+          targetRevision: '{{ .targetRevision }}'
+          helm:
+            releaseName: '{{ .name }}'
+            valueFiles:
+              - '$values/{{ .valuesFile }}'
+        - repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+          targetRevision: HEAD
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .namespace }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

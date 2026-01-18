@@ -1,0 +1,58 @@
+# ApplicationSet: Streaming Platform
+# Groups Kafka, Kafka UI, and TimescaleDB
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: streaming
+  namespace: mlops-ci
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - name: strimzi-operator
+            chart: strimzi-kafka-operator
+            repoURL: https://strimzi.io/charts/
+            targetRevision: "0.44.0"
+            namespace: mlops-stream
+            syncWave: "1"
+          - name: kafka-ui
+            chart: kafka-ui
+            repoURL: https://provectus.github.io/kafka-ui-charts
+            targetRevision: "0.7.6"
+            namespace: mlops-stream
+            syncWave: "4"
+          - name: timescaledb
+            chart: postgresql
+            repoURL: https://charts.bitnami.com/bitnami
+            targetRevision: "16.4.3"
+            namespace: mlops-stream
+            syncWave: "2"
+
+  template:
+    metadata:
+      name: '{{ .name }}'
+      namespace: mlops-ci
+      labels:
+        app.kubernetes.io/component: streaming
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{ .syncWave }}'
+    spec:
+      project: mlops-infrastructure
+      source:
+        repoURL: '{{ .repoURL }}'
+        chart: '{{ .chart }}'
+        targetRevision: '{{ .targetRevision }}'
+        helm:
+          releaseName: '{{ .name }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{ .namespace }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
