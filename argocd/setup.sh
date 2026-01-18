@@ -59,16 +59,16 @@ echo ""
 echo -e "${YELLOW}=== Configuration Steps ===${NC}"
 echo ""
 echo "1. Update repository URL in ArgoCD manifests:"
-echo "   Replace 'YOUR_USERNAME/YOUR_REPO' with your actual repository URL"
+echo "   Replace 'MosesDastmard/maine-mlops-infra' with your actual repository URL"
 echo ""
-echo "   Run: grep -r 'YOUR_USERNAME/YOUR_REPO' $SCRIPT_DIR/"
+echo "   Run: grep -r 'MosesDastmard/maine-mlops-infra' $SCRIPT_DIR/"
 echo ""
 
 read -p "Enter your GitHub repository URL (e.g., https://github.com/user/repo.git): " REPO_URL
 
 if [ -n "$REPO_URL" ]; then
     echo -e "${YELLOW}Updating repository URLs...${NC}"
-    find "$SCRIPT_DIR" -type f -name "*.yml" -exec sed -i "s|https://github.com/YOUR_USERNAME/YOUR_REPO.git|$REPO_URL|g" {} \;
+    find "$SCRIPT_DIR" -type f -name "*.yml" -exec sed -i "s|https://github.com/MosesDastmard/maine-mlops-infra.git|$REPO_URL|g" {} \;
     echo -e "${GREEN}Repository URLs updated${NC}"
 fi
 

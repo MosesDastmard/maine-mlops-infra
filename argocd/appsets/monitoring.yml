@@ -40,7 +40,7 @@ spec:
             releaseName: '{{ .name }}'
             valueFiles:
               - '$values/{{ .valuesFile }}'
-        - repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+        - repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git  # UPDATE THIS
           targetRevision: HEAD
           ref: values
       destination:

@@ -108,7 +108,7 @@ configs:
   repositories:
     # UPDATE THIS: Add your infrastructure repository
     # infra-repo:
-    #   url: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+    #   url: https://github.com/MosesDastmard/maine-mlops-infra.git
     #   name: infra
     #   type: git
 

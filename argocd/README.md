@@ -54,14 +54,14 @@ argocd/
 
 ### Step 1: Update Repository URLs
 
-Before deploying, update all occurrences of `YOUR_USERNAME/YOUR_REPO` with your actual GitHub repository URL:
+Before deploying, update all occurrences of `MosesDastmard/maine-mlops-infra` with your actual GitHub repository URL:
 
 ```bash
 # Find all files that need updating
-grep -r "YOUR_USERNAME/YOUR_REPO" argocd/
+grep -r "MosesDastmard/maine-mlops-infra" argocd/
 
 # Update them (example using sed)
-find argocd/ -type f -name "*.yml" -exec sed -i 's|YOUR_USERNAME/YOUR_REPO|your-actual-username/your-actual-repo|g' {} \;
+find argocd/ -type f -name "*.yml" -exec sed -i 's|MosesDastmard/maine-mlops-infra|your-actual-username/your-actual-repo|g' {} \;
 ```
 
 ### Step 2: Configure Repository Access (if private)
@@ -75,7 +75,7 @@ If your repository is private, you need to configure credentials:
 
 **Option B: Via CLI**
 ```bash
-argocd repo add https://github.com/YOUR_USERNAME/YOUR_REPO.git \
+argocd repo add https://github.com/MosesDastmard/maine-mlops-infra.git \
   --username your-username \
   --password your-github-token
 ```
@@ -84,7 +84,7 @@ argocd repo add https://github.com/YOUR_USERNAME/YOUR_REPO.git \
 ```bash
 kubectl create secret generic repo-creds \
   -n mlops-ci \
-  --from-literal=url=https://github.com/YOUR_USERNAME/YOUR_REPO.git \
+  --from-literal=url=https://github.com/MosesDastmard/maine-mlops-infra.git \
   --from-literal=username=your-username \
   --from-literal=password=your-github-token
 kubectl label secret repo-creds -n mlops-ci argocd.argoproj.io/secret-type=repository

@@ -13,7 +13,7 @@ spec:
 
   source:
     # UPDATE THIS with your actual repository URL
-    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+    repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git
     targetRevision: HEAD
     path: argocd/bootstrap/apps
 

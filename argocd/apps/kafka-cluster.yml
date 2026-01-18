@@ -14,7 +14,7 @@ spec:
 
   source:
     # Reference the local repository for Kafka Strimzi manifests
-    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO.git  # UPDATE THIS
+    repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git  # UPDATE THIS
     targetRevision: HEAD
     path: helm
     directory:
