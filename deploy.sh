@@ -24,51 +24,58 @@ helm repo add jenkins https://charts.jenkins.io || true
 helm repo add argo https://argoproj.github.io/argo-helm || true
 helm repo add kafka-ui https://provectus.github.io/kafka-ui-charts || true
 helm repo add strimzi https://strimzi.io/charts/ || true
+helm repo add lakefs https://charts.lakefs.io || true
 helm repo update
 
 echo "Deploying services..."
 
 # Ingress controller (deploy first)
-echo "[1/13] Deploying Traefik..."
+echo "[1/15] Deploying Traefik..."
 helm upgrade --install traefik traefik/traefik \
   -f "$SCRIPT_DIR/helm/traefik.yml" \
   -n kube-system --create-namespace
 
 # Databases
-echo "[2/13] Deploying MongoDB..."
+echo "[2/15] Deploying MongoDB..."
 helm upgrade --install mongodb bitnami/mongodb \
   -f "$SCRIPT_DIR/helm/mongo.yml" \
   -n mlops-db --create-namespace
 
-echo "[3/13] Deploying MySQL..."
+echo "[3/15] Deploying MySQL..."
 helm upgrade --install mysql bitnami/mysql \
   -f "$SCRIPT_DIR/helm/mysql.yml" \
   -n mlops-db --create-namespace
 
-echo "[4/13] Deploying Redis..."
+echo "[4/15] Deploying Redis..."
 helm upgrade --install redis bitnami/redis \
   -f "$SCRIPT_DIR/helm/redis.yml" \
   -n mlops-db --create-namespace
 
 # Monitoring
-echo "[5/13] Deploying Prometheus..."
+echo "[5/15] Deploying Prometheus..."
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
   -f "$SCRIPT_DIR/helm/prometheus.yml" \
   -n mlops-mon --create-namespace
 
-echo "[6/13] Deploying Grafana..."
+echo "[6/15] Deploying Grafana..."
 helm upgrade --install grafana bitnami/grafana \
   -f "$SCRIPT_DIR/helm/grafana.yml" \
   -n mlops-mon --create-namespace
 
 # CI/CD
-echo "[7/13] Deploying Jenkins..."
+echo "[7/15] Deploying Jenkins..."
 helm upgrade --install jenkins jenkins/jenkins \
   -f "$SCRIPT_DIR/helm/jenkins.yml" \
   -n mlops-ci --create-namespace
 
+# ArgoCD (GitOps)
+echo "[8/15] Deploying ArgoCD..."
+helm upgrade --install argocd argo/argo-cd \
+  -f "$SCRIPT_DIR/helm/argocd.yml" \
+  -n mlops-ci
+
 # Container Registry
-echo "[8/13] Deploying Registry..."
+echo "[9/15] Deploying Registry..."
 kubectl create namespace container-registry --dry-run=client -o yaml | kubectl apply -f -
 
 # Apply S3 credentials secret
@@ -86,7 +93,7 @@ helm upgrade --install registry twuni/docker-registry \
   -n container-registry --create-namespace
 
 # MLflow
-echo "[9/13] Deploying MLflow..."
+echo "[10/15] Deploying MLflow..."
 kubectl create namespace mlops-ml --dry-run=client -o yaml | kubectl apply -f -
 
 # Create MLflow S3 credentials secret (reuse same S3 credentials)
@@ -99,8 +106,14 @@ helm upgrade --install mlflow bitnami/mlflow \
   -f "$SCRIPT_DIR/helm/mlflow.yml" \
   -n mlops-ml --create-namespace
 
+# LakeFS (data versioning)
+echo "[11/15] Deploying LakeFS..."
+helm upgrade --install lakefs lakefs/lakefs \
+  -f "$SCRIPT_DIR/helm/lakefs.yml" \
+  -n mlops-ml
+
 # Kubeflow Pipelines
-echo "[10/13] Deploying Kubeflow Pipelines..."
+echo "[12/15] Deploying Kubeflow Pipelines..."
 kubectl create namespace kubeflow --dry-run=client -o yaml | kubectl apply -f -
 
 # Create Kubeflow S3 credentials secret (reuse same S3 credentials)
@@ -149,7 +162,7 @@ kubectl wait --for=condition=ready pod -l app=ml-pipeline -n kubeflow --timeout=
 kubectl patch svc ml-pipeline-ui -n kubeflow -p '{"spec": {"type": "NodePort", "ports": [{"port": 80, "nodePort": 30030, "targetPort": 3000}]}}' || true
 
 # Kafka (streaming platform) - Using Strimzi operator (Bitnami images unavailable)
-echo "[11/13] Deploying Kafka (Strimzi)..."
+echo "[13/15] Deploying Kafka (Strimzi)..."
 kubectl create namespace mlops-stream --dry-run=client -o yaml | kubectl apply -f -
 
 # Install Strimzi operator
@@ -169,7 +182,7 @@ echo "Waiting for Kafka cluster to be ready..."
 kubectl wait kafka/kafka --for=condition=Ready -n mlops-stream --timeout=300s || true
 
 # Deploy Kafka Connect (Strimzi)
-echo "[11b/13] Deploying Kafka Connect..."
+echo "[13b/15] Deploying Kafka Connect..."
 kubectl apply -f "$SCRIPT_DIR/data/ingestion/consumer/kafka-connect.yml"
 
 # Wait for Kafka Connect to be ready (build takes time)
@@ -177,13 +190,13 @@ echo "Waiting for Kafka Connect to build and start..."
 kubectl wait kafkaconnect/kafka-connect --for=condition=Ready -n mlops-stream --timeout=600s || true
 
 # Kafka UI
-echo "[12/13] Deploying Kafka UI..."
+echo "[14/15] Deploying Kafka UI..."
 helm upgrade --install kafka-ui kafka-ui/kafka-ui \
   -f "$SCRIPT_DIR/helm/kafka-ui.yml" \
   -n mlops-stream
 
 # TimescaleDB (time-series database)
-echo "[13/13] Deploying TimescaleDB..."
+echo "[15/15] Deploying TimescaleDB..."
 helm upgrade --install timescaledb bitnami/postgresql \
   -f "$SCRIPT_DIR/helm/timescaledb.yml" \
   -n mlops-stream
@@ -195,8 +208,8 @@ echo "Namespaces:"
 echo "  - kube-system:        Traefik"
 echo "  - mlops-db:           MongoDB, MySQL, Redis"
 echo "  - mlops-mon:          Prometheus, Grafana"
-echo "  - mlops-ci:           Jenkins"
-echo "  - mlops-ml:           MLflow"
+echo "  - mlops-ci:           Jenkins, ArgoCD"
+echo "  - mlops-ml:           MLflow, LakeFS"
 echo "  - kubeflow:           Kubeflow Pipelines"
 echo "  - container-registry: Docker Registry"
 echo "  - mlops-stream:       Kafka, Kafka UI, TimescaleDB"
@@ -206,7 +219,9 @@ echo "  - Grafana:      http://<SERVER_IP>:30000"
 echo "  - Kubeflow:     http://<SERVER_IP>:30030"
 echo "  - MLflow:       http://<SERVER_IP>:30050"
 echo "  - Jenkins:      http://<SERVER_IP>:30080"
+echo "  - ArgoCD:       http://<SERVER_IP>:30200"
 echo "  - Kafka UI:     http://<SERVER_IP>:30091"
+echo "  - LakeFS:       http://<SERVER_IP>:30100"
 echo "  - Registry:     http://<SERVER_IP>:30500"
 echo "  - Kafka:        <SERVER_IP>:30092"
 echo "  - TimescaleDB:  <SERVER_IP>:30432"

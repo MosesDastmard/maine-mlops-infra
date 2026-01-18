@@ -1,0 +1,79 @@
+# LakeFS Helm Values
+# Data versioning and data lake management with Git-like semantics
+
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+
+# Service configuration - expose UI via NodePort
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30100
+
+# Secrets configuration
+secrets:
+  # PostgreSQL connection string (using bundled dev postgres)
+  databaseConnectionString: "postgres://lakefs:Moses1749@lakefs-postgresql:5432/lakefs?sslmode=disable"
+  # Auth encryption key (must be at least 32 characters)
+  authEncryptSecretKey: "Moses1749LakeFSAuthEncryptKey32!"
+
+# LakeFS configuration
+lakefsConfig: |
+  database:
+    type: postgres
+  blockstore:
+    type: s3
+    s3:
+      endpoint: https://eu2.contabostorage.com
+      force_path_style: true
+      credentials:
+        access_key_id: 22b0f46d06e6e3b68428272ae9467e6c
+        secret_access_key: cef53ab2058a29fb76de4765e71cece1
+  auth:
+    encrypt:
+      secret_key: Moses1749LakeFSAuthEncryptKey32!
+    ui_config:
+      login_cookie_names:
+        - internal_auth_session
+
+# Use bundled development PostgreSQL
+useDevPostgres: true
+
+# PostgreSQL settings (bundled)
+postgresql:
+  enabled: true
+  auth:
+    username: lakefs
+    password: Moses1749
+    database: lakefs
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 10Gi
+
+# Resources
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Liveness and readiness probes
+livenessProbe:
+  httpGet:
+    path: /_health
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /_health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 10
