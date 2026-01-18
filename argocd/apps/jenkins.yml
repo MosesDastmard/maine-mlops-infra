@@ -28,6 +28,11 @@ spec:
           admin:
             username: admin
             password: Moses1749
+          installPlugins:
+            - kubernetes:4380.v4ab11c8c62e8
+            - workflow-aggregator:600.vb_57cdd26fdd7
+            - git:5.7.0
+            - configuration-as-code:1963.v24e046127a_3f
 
         agent:
           enabled: true
