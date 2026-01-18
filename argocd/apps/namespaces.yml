@@ -1,58 +1,29 @@
-# Kubernetes Namespaces for MLOps Infrastructure
-# Applied first to ensure namespaces exist before deploying services
----
-apiVersion: v1
-kind: Namespace
+# ArgoCD Application: Namespaces
+# Deploys all required namespaces first (sync-wave -1)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
-  name: mlops-db
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-mon
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-ci
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-ml
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kubeflow
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: container-registry
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-stream
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: services-stream
-  labels:
-    app.kubernetes.io/managed-by: argocd
+  name: namespaces
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git
+    targetRevision: HEAD
+    path: namespaces
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
