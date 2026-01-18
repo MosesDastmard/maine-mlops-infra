@@ -37,3 +37,10 @@ spec:
       name: minio
       jqPathExpressions:
         - .spec.template.spec.containers[].image
+    # Ignore cache-server replicas - scaled to 0 due to KFP 2.4.0 bug on K8s 1.34+
+    # The pod watcher panics with "interface conversion: interface {} is *v1.Status, not *v1.Pod"
+    - group: apps
+      kind: Deployment
+      name: cache-server
+      jqPathExpressions:
+        - .spec.replicas
