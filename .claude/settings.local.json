@@ -20,7 +20,12 @@
       "Bash(helm repo add:*)",
       "Bash(helm repo update:*)",
       "Bash(bash:*)",
-      "Bash(sudo systemctl restart:*)"
+      "Bash(sudo systemctl restart:*)",
+      "Bash(argocd app sync:*)",
+      "Bash(helm list:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }
