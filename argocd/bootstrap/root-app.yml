@@ -12,10 +12,9 @@ spec:
   project: default  # Use default project for root app
 
   source:
-    # UPDATE THIS with your actual repository URL
     repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git
     targetRevision: HEAD
-    path: argocd/bootstrap/apps
+    path: argocd
 
   destination:
     server: https://kubernetes.default.svc

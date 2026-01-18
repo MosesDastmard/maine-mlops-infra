@@ -1,0 +1,51 @@
+# Kustomization for App of Apps Bootstrap
+# Lists all applications to be deployed
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Projects (deploy first)
+  - projects/mlops-infrastructure.yml
+  - projects/mlops-applications.yml
+
+  # Core infrastructure (sealed-secrets for secret management)
+  - apps/sealed-secrets.yml
+
+  # Namespaces
+  - apps/namespaces.yml
+
+  # Ingress Controller
+  - apps/traefik.yml
+
+  # Databases
+  - apps/mongodb.yml
+  - apps/mysql.yml
+  - apps/redis.yml
+
+  # Monitoring
+  - apps/prometheus.yml
+  - apps/grafana.yml
+
+  # CI/CD
+  - apps/jenkins.yml
+
+  # Container Registry
+  - apps/registry.yml
+
+  # ML Platform
+  - apps/mlflow.yml
+  - apps/lakefs.yml
+
+  # Kubeflow
+  - apps/kubeflow-crds.yml
+  - apps/argo-workflows.yml
+  - apps/kubeflow-pipelines.yml
+
+  # Streaming Platform
+  - apps/strimzi-operator.yml
+  - apps/kafka-cluster.yml
+  - apps/kafka-ui.yml
+  - apps/timescaledb.yml
+
+  # Custom Applications
+  - apps/services-stream-consumer.yml
