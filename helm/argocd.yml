@@ -43,23 +43,23 @@ repoServer:
   replicas: 1
   resources:
     requests:
-      memory: "256Mi"
-      cpu: "100m"
+      memory: "512Mi"
+      cpu: "250m"
     limits:
-      memory: "2Gi"
-      cpu: "1000m"
+      memory: "4Gi"
+      cpu: "2000m"
   extraArgs:
     - --parallelismlimit=2
   livenessProbe:
-    initialDelaySeconds: 30
+    initialDelaySeconds: 60
     periodSeconds: 30
     timeoutSeconds: 30
-    failureThreshold: 5
+    failureThreshold: 10
   readinessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 10
-    failureThreshold: 3
+    failureThreshold: 5
 
 # Redis configuration (bundled)
 redis:
