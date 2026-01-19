@@ -8,8 +8,8 @@ global:
 
 image:
   registry: docker.io
-  repository: timescale/timescaledb
-  tag: latest-pg16
+  repository: timescale/timescaledb-ha
+  tag: pg16.11-ts2.24.0-all
 
 # Authentication
 auth:
@@ -42,7 +42,8 @@ primary:
       cpu: "2000m"
   # TimescaleDB-specific settings
   extendedConfiguration: |
-    shared_preload_libraries = 'timescaledb'
+    shared_preload_libraries = 'timescaledb,pg_cron'
+    cron.database_name = 'postgres'
     timescaledb.telemetry_level = 'off'
     max_connections = 200
     shared_buffers = 1GB
