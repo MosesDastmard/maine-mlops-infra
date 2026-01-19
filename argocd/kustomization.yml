@@ -48,4 +48,5 @@ resources:
   - apps/timescaledb.yml
 
   # Custom Applications
-  - apps/services-stream-consumer.yml
+  - apps/services-stream.yml
+  - apps/services-sync.yml
