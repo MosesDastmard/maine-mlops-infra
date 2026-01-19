@@ -33,6 +33,8 @@ spec:
           password: Moses1749Timescale!
 
         primary:
+          podAnnotations:
+            configChecksum: "v2-pg_cron-enabled"
           service:
             type: NodePort
             nodePorts:
