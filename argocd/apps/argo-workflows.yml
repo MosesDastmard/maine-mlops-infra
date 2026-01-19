@@ -21,6 +21,16 @@ spec:
         server:
           extraArgs:
             - --auth-mode=server
+          service:
+            type: NodePort
+            nodePort: 30300
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
 
         controller:
           workflowNamespaces:
