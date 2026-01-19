@@ -6,4 +6,5 @@ namespace: services-stream
 
 resources:
   - namespace.yml
-  - app.yml
+  - consumer.yml
+  - producer.yml
