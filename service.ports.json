@@ -1,0 +1,86 @@
+[
+  {
+    "service": "grafana",
+    "port": "30000",
+    "user": "admin",
+    "password": "Moses1749"
+  },
+  {
+    "service": "mongodb",
+    "port": "30017",
+    "user": "admin",
+    "password": "Moses1749"
+  },
+  {
+    "service": "kubeflow-pipelines-ui",
+    "port": "30030",
+    "user": null,
+    "password": null
+  },
+  {
+    "service": "mlflow",
+    "port": "30050",
+    "user": "admin",
+    "password": "Moses1749MLflow!"
+  },
+  {
+    "service": "jenkins",
+    "port": "30080",
+    "user": "admin",
+    "password": "Moses1749"
+  },
+  {
+    "service": "kubeflow-api",
+    "port": "30088",
+    "user": null,
+    "password": null
+  },
+  {
+    "service": "kafka-ui",
+    "port": "30091",
+    "user": "admin",
+    "password": "Moses1749KafkaUI!"
+  },
+  {
+    "service": "kafka",
+    "port": "30092",
+    "user": null,
+    "password": null
+  },
+  {
+    "service": "lakefs",
+    "port": "30100",
+    "user": "lakefs",
+    "password": "Moses1749"
+  },
+  {
+    "service": "argocd",
+    "port": "30200",
+    "user": "admin",
+    "password": "(auto-generated, run: kubectl get secret argocd-initial-admin-secret -n mlops-ci -o jsonpath='{.data.password}' | base64 -d)"
+  },
+  {
+    "service": "argo-workflows",
+    "port": "30300",
+    "user": null,
+    "password": null
+  },
+  {
+    "service": "mysql",
+    "port": "30306",
+    "user": "admin",
+    "password": "Moses1749"
+  },
+  {
+    "service": "timescaledb",
+    "port": "30432",
+    "user": "mlops",
+    "password": "Moses1749Timescale!"
+  },
+  {
+    "service": "registry",
+    "port": "30500",
+    "user": null,
+    "password": null
+  }
+]
