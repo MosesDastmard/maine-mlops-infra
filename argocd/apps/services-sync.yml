@@ -20,7 +20,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: services-sync
+    namespace: services-stream
 
   syncPolicy:
     automated:
