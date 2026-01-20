@@ -19,32 +19,52 @@ spec:
     # System namespace
     - namespace: kube-system
       server: https://kubernetes.default.svc
-    # Database namespace
-    - namespace: mlops-db
+    # ArgoCD namespace
+    - namespace: argocd
       server: https://kubernetes.default.svc
-    # Monitoring namespace
-    - namespace: mlops-mon
-      server: https://kubernetes.default.svc
-    # CI/CD namespace
+    # CI/CD namespace (where ArgoCD apps live)
     - namespace: mlops-ci
       server: https://kubernetes.default.svc
-    # ML namespace
-    - namespace: mlops-ml
+    # Databases
+    - namespace: mlops-mongodb
       server: https://kubernetes.default.svc
-    # Kubeflow namespace
-    - namespace: kubeflow
+    - namespace: mlops-mysql
       server: https://kubernetes.default.svc
-    # Container registry namespace
-    - namespace: container-registry
+    - namespace: mlops-redis
       server: https://kubernetes.default.svc
-    # Streaming namespace
-    - namespace: mlops-stream
+    - namespace: mlops-timescaledb
       server: https://kubernetes.default.svc
-    # Feature store namespace
+    # Monitoring
+    - namespace: mlops-prometheus
+      server: https://kubernetes.default.svc
+    - namespace: mlops-grafana
+      server: https://kubernetes.default.svc
+    # Streaming
+    - namespace: mlops-kafka
+      server: https://kubernetes.default.svc
+    # ML Platform
+    - namespace: mlops-mlflow
+      server: https://kubernetes.default.svc
+    - namespace: mlops-lakefs
+      server: https://kubernetes.default.svc
+    - namespace: mlops-kubeflow
+      server: https://kubernetes.default.svc
+    - namespace: mlops-argo-workflows
+      server: https://kubernetes.default.svc
+    # Feature store
     - namespace: mlops-feast
       server: https://kubernetes.default.svc
-    # Custom services namespace
+    # CI/CD tools
+    - namespace: mlops-jenkins
+      server: https://kubernetes.default.svc
+    # Container registry
+    - namespace: mlops-registry
+      server: https://kubernetes.default.svc
+    # Custom services
     - namespace: services-stream
+      server: https://kubernetes.default.svc
+    # Default namespace for namespaces app
+    - namespace: default
       server: https://kubernetes.default.svc
 
   # Cluster resource allow list
