@@ -35,6 +35,8 @@ resources:
   # ML Platform
   - ../../apps/mlflow.yml
   - ../../apps/lakefs.yml
+  - ../../apps/feast-postgresql.yml
+  - ../../apps/feast-redis.yml
   - ../../apps/feast.yml
 
   # Kubeflow

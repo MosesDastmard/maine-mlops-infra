@@ -1,0 +1,60 @@
+# ArgoCD Application: Feast Redis
+# Redis for Feast online store (low-latency feature serving)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: feast-redis
+  namespace: mlops-ci
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: redis
+    targetRevision: 20.11.3
+    helm:
+      releaseName: feast-redis
+      values: |
+        global:
+          compatibility:
+            allowInsecureImages: true
+
+        image:
+          registry: docker.io
+          repository: bitnamilegacy/redis
+          tag: "8.2.1-debian-12-r0"
+
+        architecture: standalone
+
+        auth:
+          enabled: true
+          password: Moses1749FeastRedis!
+
+        master:
+          persistence:
+            enabled: true
+            storageClass: local-path
+            size: 5Gi
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-ml
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

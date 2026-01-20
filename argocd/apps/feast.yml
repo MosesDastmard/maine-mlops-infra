@@ -1,5 +1,6 @@
 # ArgoCD Application: Feast Feature Store
 # Official Feast Helm chart for feature serving with UI
+# Requires: feast-postgresql, feast-redis (deployed separately)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -8,7 +9,7 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   project: mlops-infrastructure
 
@@ -36,12 +37,13 @@ spec:
         #   project: mlops_features
         #   provider: local
         #   registry:
-        #     path: /tmp/feast/registry.db
+        #     registry_type: sql
+        #     path: postgresql://feast:***@feast-postgresql.mlops-ml.svc.cluster.local:5432/feast_registry
         #   online_store:
-        #     type: sqlite
-        #     path: /tmp/feast/online_store.db
+        #     type: redis
+        #     connection_string: feast-redis-master.mlops-ml.svc.cluster.local:6379,password=***
         #   entity_key_serialization_version: 2
-        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHBhdGg6IC90bXAvZmVhc3QvcmVnaXN0cnkuZGIKb25saW5lX3N0b3JlOgogIHR5cGU6IHNxbGl0ZQogIHBhdGg6IC90bXAvZmVhc3Qvb25saW5lX3N0b3JlLmRiCmVudGl0eV9rZXlfc2VyaWFsaXphdGlvbl92ZXJzaW9uOiAyCg=="
+        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHJlZ2lzdHJ5X3R5cGU6IHNxbAogIHBhdGg6IHBvc3RncmVzcWw6Ly9mZWFzdDpNb3NlczE3NDlGZWFzdCFAZmVhc3QtcG9zdGdyZXNxbC5tbG9wcy1tbC5zdmMuY2x1c3Rlci5sb2NhbDo1NDMyL2ZlYXN0X3JlZ2lzdHJ5Cm9ubGluZV9zdG9yZToKICB0eXBlOiByZWRpcwogIGNvbm5lY3Rpb25fc3RyaW5nOiBmZWFzdC1yZWRpcy1tYXN0ZXIubWxvcHMtbWwuc3ZjLmNsdXN0ZXIubG9jYWw6NjM3OSxwYXNzd29yZD1Nb3NlczE3NDlGZWFzdFJlZGlzIQplbnRpdHlfa2V5X3NlcmlhbGl6YXRpb25fdmVyc2lvbjogMgo="
 
         service:
           type: NodePort
@@ -56,11 +58,11 @@ spec:
             cpu: "1000m"
 
         livenessProbe:
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           periodSeconds: 30
 
         readinessProbe:
-          initialDelaySeconds: 20
+          initialDelaySeconds: 30
           periodSeconds: 10
 
   destination:
