@@ -43,7 +43,7 @@ spec:
         #     type: redis
         #     connection_string: feast-redis-master.mlops-feast.svc.cluster.local:6379,password=***
         #   entity_key_serialization_version: 2
-        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHJlZ2lzdHJ5X3R5cGU6IHNxbAogIHBhdGg6IHBvc3RncmVzcWw6Ly9mZWFzdDpNb3NlczE3NDlGZWFzdEBmZWFzdC1wb3N0Z3Jlc3FsLm1sb3BzLWZlYXN0LnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzIvZmVhc3RfcmVnaXN0cnkKb25saW5lX3N0b3JlOgogIHR5cGU6IHJlZGlzCiAgY29ubmVjdGlvbl9zdHJpbmc6IGZlYXN0LXJlZGlzLW1hc3Rlci5tbG9wcy1mZWFzdC5zdmMuY2x1c3Rlci5sb2NhbDo2Mzc5LHBhc3N3b3JkPU1vc2VzMTc0OUZlYXN0UmVkaXMKZW50aXR5X2tleV9zZXJpYWxpemF0aW9uX3ZlcnNpb246IDIK"
+        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHJlZ2lzdHJ5X3R5cGU6IHNxbAogIHBhdGg6IHBvc3RncmVzcWw6Ly9mZWFzdDpNb3NlczE3NDlGZWFzdEBmZWFzdC1wb3N0Z3Jlc3FsLm1sb3BzLWZlYXN0LnN2Yy5jbHVzdGVyLmxvY2FsOjU0MzIvZmVhc3RfcmVnaXN0cnkKb25saW5lX3N0b3JlOgogIHR5cGU6IHJlZGlzCiAgY29ubmVjdGlvbl9zdHJpbmc6IGZlYXN0LXJlZGlzLW1hc3Rlci5tbG9wcy1mZWFzdC5zdmMuY2x1c3Rlci5sb2NhbDo2Mzc5LHBhc3N3b3JkPU1vc2VzMTc0OUZlYXN0UmVkaXMhCmVudGl0eV9rZXlfc2VyaWFsaXphdGlvbl92ZXJzaW9uOiAyCg=="
 
         service:
           type: NodePort

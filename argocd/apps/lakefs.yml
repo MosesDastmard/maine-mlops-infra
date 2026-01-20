@@ -29,7 +29,7 @@ spec:
           nodePort: 30100
 
         secrets:
-          databaseConnectionString: "postgres://lakefs:Moses1749@lakefs-postgresql:5432/lakefs?sslmode=disable"
+          databaseConnectionString: "postgres://lakefs:Moses1749@lakefs-postgresql.mlops-lakefs.svc.cluster.local:5432/lakefs?sslmode=disable"
           authEncryptSecretKey: "Moses1749LakeFSAuthEncryptKey32!"
 
         lakefsConfig: |
@@ -50,19 +50,10 @@ spec:
               login_cookie_names:
                 - internal_auth_session
 
-        useDevPostgres: true
+        useDevPostgres: false
 
         postgresql:
-          enabled: true
-          auth:
-            username: lakefs
-            password: Moses1749
-            database: lakefs
-          primary:
-            persistence:
-              enabled: true
-              storageClass: local-path
-              size: 10Gi
+          enabled: false
 
         resources:
           requests:

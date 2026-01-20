@@ -1,0 +1,62 @@
+# ArgoCD Application: LakeFS PostgreSQL
+# PostgreSQL for LakeFS metadata storage
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lakefs-postgresql
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: postgresql
+    targetRevision: 16.4.3
+    helm:
+      releaseName: lakefs-postgresql
+      values: |
+        global:
+          security:
+            allowInsecureImages: true
+
+        image:
+          registry: docker.io
+          repository: bitnamilegacy/postgresql
+          tag: "17.6.0-debian-12-r4"
+
+        auth:
+          postgresPassword: Moses1749Admin
+          username: lakefs
+          password: Moses1749
+          database: lakefs
+
+        primary:
+          persistence:
+            enabled: true
+            storageClass: local-path
+            size: 5Gi
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        architecture: standalone
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-lakefs
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

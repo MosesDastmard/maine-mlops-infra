@@ -34,6 +34,7 @@ resources:
 
   # ML Platform
   - apps/mlflow.yml
+  - apps/lakefs-postgresql.yml
   - apps/lakefs.yml
 
   # Feature Store
