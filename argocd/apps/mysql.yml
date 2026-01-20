@@ -65,7 +65,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-db
+    namespace: mlops-mysql
 
   syncPolicy:
     automated:

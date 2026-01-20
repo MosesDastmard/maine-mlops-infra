@@ -3,14 +3,91 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: mlops-db
+  name: mlops-grafana
   labels:
     app.kubernetes.io/managed-by: argocd
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: mlops-mon
+  name: mlops-mongodb
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-kubeflow
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-mlflow
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-feast
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-jenkins
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-kafka
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-lakefs
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-argo
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-mysql
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-timescaledb
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-registry
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-prometheus
   labels:
     app.kubernetes.io/managed-by: argocd
 ---
@@ -18,34 +95,6 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: mlops-ci
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-ml
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: kubeflow
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: container-registry
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mlops-stream
   labels:
     app.kubernetes.io/managed-by: argocd
 ---

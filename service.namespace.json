@@ -1,0 +1,62 @@
+[
+  {
+    "service": "grafana",
+    "namespace": "mlops-grafana"
+  },
+  {
+    "service": "mongodb",
+    "namespace": "mlops-mongodb"
+  },
+  {
+    "service": "kubeflow-pipelines-ui",
+    "namespace": "mlops-kubeflow"
+  },
+  {
+    "service": "mlflow",
+    "namespace": "mlops-mlflow"
+  },
+  {
+    "service": "feast",
+    "namespace": "mlops-feast"
+  },
+  {
+    "service": "jenkins",
+    "namespace": "mlops-jenkins"
+  },
+  {
+    "service": "kubeflow-api",
+    "namespace": "mlops-kubeflow"
+  },
+  {
+    "service": "kafka-ui",
+    "namespace": "mlops-kafka"
+  },
+  {
+    "service": "kafka",
+    "namespace": "mlops-kafka"
+  },
+  {
+    "service": "lakefs",
+    "namespace": "mlops-lakefs"
+  },
+  {
+    "service": "argocd",
+    "namespace": "mlops-argo"
+  },
+  {
+    "service": "argo-workflows",
+    "namespace": "mlops-argo"
+  },
+  {
+    "service": "mysql",
+    "namespace": "mlops-mysql"
+  },
+  {
+    "service": "timescaledb",
+    "namespace": "mlops-timescaledb"
+  },
+  {
+    "service": "registry",
+    "namespace": "mlops-registry"
+  }
+]

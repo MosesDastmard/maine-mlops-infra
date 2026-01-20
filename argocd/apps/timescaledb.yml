@@ -80,7 +80,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-stream
+    namespace: mlops-timescaledb
 
   syncPolicy:
     automated:

@@ -34,7 +34,7 @@ spec:
 
         controller:
           workflowNamespaces:
-            - kubeflow
+            - mlops-kubeflow
           resources:
             requests:
               memory: "256Mi"
@@ -51,7 +51,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubeflow
+    namespace: mlops-argo
 
   syncPolicy:
     automated:

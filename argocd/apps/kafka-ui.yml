@@ -30,7 +30,7 @@ spec:
           kafka:
             clusters:
               - name: mlops-kafka
-                bootstrapServers: kafka-kafka-bootstrap.mlops-stream.svc.cluster.local:9092
+                bootstrapServers: kafka-kafka-bootstrap.mlops-kafka.svc.cluster.local:9092
 
         auth:
           type: LOGIN_FORM
@@ -61,7 +61,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-stream
+    namespace: mlops-kafka
 
   syncPolicy:
     automated:

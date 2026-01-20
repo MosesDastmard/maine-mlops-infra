@@ -82,7 +82,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-ml
+    namespace: mlops-mlflow
 
   syncPolicy:
     automated:

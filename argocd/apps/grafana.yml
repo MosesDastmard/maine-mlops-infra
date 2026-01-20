@@ -49,7 +49,7 @@ spec:
             datasources:
             - name: Prometheus
               type: prometheus
-              url: http://prometheus-kube-prometheus-prometheus.mlops-mon.svc.cluster.local:9090
+              url: http://prometheus-kube-prometheus-prometheus.mlops-prometheus.svc.cluster.local:9090
               access: proxy
               isDefault: true
 
@@ -62,7 +62,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-mon
+    namespace: mlops-grafana
 
   syncPolicy:
     automated:

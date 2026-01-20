@@ -78,7 +78,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: container-registry
+    namespace: mlops-registry
 
   syncPolicy:
     automated:
