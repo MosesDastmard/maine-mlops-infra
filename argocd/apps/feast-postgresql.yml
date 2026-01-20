@@ -20,7 +20,7 @@ spec:
       releaseName: feast-postgresql
       values: |
         global:
-          compatibility:
+          security:
             allowInsecureImages: true
 
         image:

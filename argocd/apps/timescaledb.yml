@@ -74,9 +74,7 @@ spec:
         architecture: standalone
 
         metrics:
-          enabled: true
-          serviceMonitor:
-            enabled: false
+          enabled: false
 
   destination:
     server: https://kubernetes.default.svc

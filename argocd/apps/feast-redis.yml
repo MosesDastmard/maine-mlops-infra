@@ -20,7 +20,7 @@ spec:
       releaseName: feast-redis
       values: |
         global:
-          compatibility:
+          security:
             allowInsecureImages: true
 
         image:

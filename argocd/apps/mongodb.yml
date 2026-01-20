@@ -24,7 +24,7 @@ spec:
           tag: "8.0.13-debian-12-r0"
 
         global:
-          compatibility:
+          security:
             allowInsecureImages: true
 
         arbiter:

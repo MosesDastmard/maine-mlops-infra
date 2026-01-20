@@ -70,7 +70,7 @@ spec:
           enabled: false
 
         global:
-          compatibility:
+          security:
             allowInsecureImages: true
 
         auth:

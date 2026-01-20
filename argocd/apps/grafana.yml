@@ -35,7 +35,7 @@ spec:
               cpu: "500m"
 
         global:
-          compatibility:
+          security:
             allowInsecureImages: true
 
         persistence:
