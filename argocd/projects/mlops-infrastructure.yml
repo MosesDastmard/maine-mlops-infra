@@ -4,7 +4,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: mlops-infrastructure
-  namespace: mlops-ci
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-10"
   finalizers:
@@ -21,11 +21,8 @@ spec:
     # System namespace
     - namespace: kube-system
       server: https://kubernetes.default.svc
-    # ArgoCD namespace
+    # ArgoCD namespace (where ArgoCD apps live)
     - namespace: argocd
-      server: https://kubernetes.default.svc
-    # CI/CD namespace (where ArgoCD apps live)
-    - namespace: mlops-ci
       server: https://kubernetes.default.svc
     # Databases
     - namespace: mlops-mongodb

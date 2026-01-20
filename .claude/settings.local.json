@@ -40,7 +40,9 @@
       "Bash(git -C /var/infra log --oneline -3)",
       "Bash(git -C /var/infra log --oneline -1)",
       "Bash(git restore:*)",
-      "Bash(base64:*)"
+      "Bash(base64:*)",
+      "Bash(kustomize build:*)",
+      "Bash(grep:*)"
     ]
   }
 }

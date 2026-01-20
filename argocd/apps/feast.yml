@@ -5,7 +5,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: feast
-  namespace: mlops-ci
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
