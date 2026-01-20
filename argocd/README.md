@@ -83,11 +83,11 @@ argocd repo add https://github.com/MosesDastmard/maine-mlops-infra.git \
 **Option C: Via Secret**
 ```bash
 kubectl create secret generic repo-creds \
-  -n mlops-ci \
+  -n argocd \
   --from-literal=url=https://github.com/MosesDastmard/maine-mlops-infra.git \
   --from-literal=username=your-username \
   --from-literal=password=your-github-token
-kubectl label secret repo-creds -n mlops-ci argocd.argoproj.io/secret-type=repository
+kubectl label secret repo-creds -n argocd argocd.argoproj.io/secret-type=repository
 ```
 
 ### Step 3: Deploy Projects First
@@ -108,7 +108,7 @@ This single command will deploy all applications defined in the bootstrap kustom
 
 ```bash
 # Check ArgoCD applications
-kubectl get applications -n mlops-ci
+kubectl get applications -n argocd
 
 # Or via ArgoCD CLI
 argocd app list
@@ -179,7 +179,7 @@ argocd app rollback <app-name> <revision>
 ### Application Stuck in "Progressing"
 ```bash
 # Check events
-kubectl describe application <app-name> -n mlops-ci
+kubectl describe application <app-name> -n argocd
 
 # Check pods
 kubectl get pods -n <target-namespace>
@@ -192,7 +192,7 @@ kubectl describe pod <pod-name> -n <target-namespace>
 argocd app get <app-name> --show-operation
 
 # Check repo server logs
-kubectl logs -n mlops-ci -l app.kubernetes.io/name=argocd-repo-server
+kubectl logs -n argocd -l app.kubernetes.io/name=argocd-repo-server
 ```
 
 ### Secret Not Found

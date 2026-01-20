@@ -42,7 +42,9 @@
       "Bash(git restore:*)",
       "Bash(base64:*)",
       "Bash(kustomize build:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)"
     ]
   }
 }

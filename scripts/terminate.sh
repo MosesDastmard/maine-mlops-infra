@@ -48,11 +48,11 @@ kubectl delete pvc -n container-registry --all --force 2>/dev/null || true
 
 # CI/CD
 echo "[8/15] Removing ArgoCD..."
-helm uninstall argocd -n mlops-ci 2>/dev/null || true
+helm uninstall argocd -n argocd 2>/dev/null || true
 
 echo "[9/15] Removing Jenkins..."
-helm uninstall jenkins -n mlops-ci 2>/dev/null || true
-kubectl delete pvc -n mlops-ci --all --force 2>/dev/null || true
+helm uninstall jenkins -n argocd 2>/dev/null || true
+kubectl delete pvc -n argocd --all --force 2>/dev/null || true
 
 # Monitoring
 echo "[10/15] Removing Grafana..."
@@ -86,7 +86,7 @@ kubectl delete namespace mlops-stream 2>/dev/null || true
 kubectl delete namespace kubeflow 2>/dev/null || true
 kubectl delete namespace mlops-ml 2>/dev/null || true
 kubectl delete namespace container-registry 2>/dev/null || true
-kubectl delete namespace mlops-ci 2>/dev/null || true
+kubectl delete namespace argocd 2>/dev/null || true
 kubectl delete namespace mlops-mon 2>/dev/null || true
 kubectl delete namespace mlops-db 2>/dev/null || true
 

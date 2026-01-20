@@ -63,7 +63,7 @@
     "service": "argocd",
     "port": "30200",
     "user": "admin",
-    "password": "(auto-generated, run: kubectl get secret argocd-initial-admin-secret -n mlops-ci -o jsonpath='{.data.password}' | base64 -d)"
+    "password": "(auto-generated, run: kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' | base64 -d)"
   },
   {
     "service": "argo-workflows",

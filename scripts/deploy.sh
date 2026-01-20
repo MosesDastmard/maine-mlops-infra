@@ -66,13 +66,13 @@ helm upgrade --install grafana bitnami/grafana \
 echo "[7/15] Deploying Jenkins..."
 helm upgrade --install jenkins jenkins/jenkins \
   -f "$SCRIPT_DIR/helm/jenkins.yml" \
-  -n mlops-ci --create-namespace
+  -n argocd --create-namespace
 
 # ArgoCD (GitOps)
 echo "[8/15] Deploying ArgoCD..."
 helm upgrade --install argocd argo/argo-cd \
   -f "$SCRIPT_DIR/helm/argocd.yml" \
-  -n mlops-ci
+  -n argocd
 
 # Container Registry
 echo "[9/15] Deploying Registry..."
@@ -208,7 +208,7 @@ echo "Namespaces:"
 echo "  - kube-system:        Traefik"
 echo "  - mlops-db:           MongoDB, MySQL, Redis"
 echo "  - mlops-mon:          Prometheus, Grafana"
-echo "  - mlops-ci:           Jenkins, ArgoCD"
+echo "  - argocd:           Jenkins, ArgoCD"
 echo "  - mlops-ml:           MLflow, LakeFS"
 echo "  - kubeflow:           Kubeflow Pipelines"
 echo "  - container-registry: Docker Registry"

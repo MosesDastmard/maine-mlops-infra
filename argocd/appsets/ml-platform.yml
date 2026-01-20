@@ -4,7 +4,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: ml-platform
-  namespace: mlops-ci
+  namespace: argocd
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
@@ -27,7 +27,7 @@ spec:
   template:
     metadata:
       name: '{{ .name }}'
-      namespace: mlops-ci
+      namespace: argocd
       labels:
         app.kubernetes.io/component: ml-platform
     spec:
