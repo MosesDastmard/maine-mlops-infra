@@ -94,13 +94,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: mlops-ci
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: mlops-redis
   labels:
     app.kubernetes.io/managed-by: argocd
