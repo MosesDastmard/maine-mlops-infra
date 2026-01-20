@@ -1,0 +1,8 @@
+# Feast Feature Store Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-feast
+  labels:
+    app.kubernetes.io/name: feast
+    app.kubernetes.io/component: feature-store

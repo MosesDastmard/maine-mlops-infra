@@ -24,6 +24,18 @@
     "password": "Moses1749MLflow!"
   },
   {
+    "service": "feast-feature-server",
+    "port": "30060",
+    "user": null,
+    "password": null
+  },
+  {
+    "service": "feast-ui",
+    "port": "30061",
+    "user": null,
+    "password": null
+  },
+  {
     "service": "jenkins",
     "port": "30080",
     "user": "admin",

@@ -1,0 +1,64 @@
+# Redis for Feast Online Store
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: feast-redis-master
+  namespace: mlops-feast
+  labels:
+    app: feast-redis
+spec:
+  serviceName: feast-redis-master
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feast-redis
+  template:
+    metadata:
+      labels:
+        app: feast-redis
+    spec:
+      containers:
+      - name: redis
+        image: bitnami/redis:7.4.3-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: REDIS_PASSWORD
+          value: "Moses1749FeastRedis!"
+        ports:
+        - containerPort: 6379
+          name: redis
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: data
+          mountPath: /bitnami/redis/data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feast-redis-master
+  namespace: mlops-feast
+  labels:
+    app: feast-redis
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: redis
+  selector:
+    app: feast-redis

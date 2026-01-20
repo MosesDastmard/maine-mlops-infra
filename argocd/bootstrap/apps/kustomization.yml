@@ -35,6 +35,7 @@ resources:
   # ML Platform
   - ../../apps/mlflow.yml
   - ../../apps/lakefs.yml
+  - ../../apps/feast.yml
 
   # Kubeflow
   - ../../apps/kubeflow-crds.yml

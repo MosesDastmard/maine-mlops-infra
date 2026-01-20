@@ -1,0 +1,19 @@
+# Feast Feature Store Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: feast-config
+  namespace: mlops-feast
+data:
+  feature_store.yaml: |
+    project: mlops_features
+    provider: local
+    registry:
+      registry_type: sql
+      path: postgresql://feast:Moses1749Feast!@feast-postgresql.mlops-feast.svc.cluster.local:5432/feast_registry
+    online_store:
+      type: redis
+      connection_string: feast-redis-master.mlops-feast.svc.cluster.local:6379,password=Moses1749FeastRedis!
+    offline_store:
+      type: file
+    entity_key_serialization_version: 2

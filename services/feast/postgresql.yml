@@ -1,0 +1,68 @@
+# PostgreSQL for Feast Registry
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: feast-postgresql
+  namespace: mlops-feast
+  labels:
+    app: feast-postgresql
+spec:
+  serviceName: feast-postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feast-postgresql
+  template:
+    metadata:
+      labels:
+        app: feast-postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: bitnami/postgresql:17.4.0-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: "feast"
+        - name: POSTGRESQL_PASSWORD
+          value: "Moses1749Feast!"
+        - name: POSTGRESQL_DATABASE
+          value: "feast_registry"
+        ports:
+        - containerPort: 5432
+          name: postgresql
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: data
+          mountPath: /bitnami/postgresql
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: local-path
+      resources:
+        requests:
+          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: feast-postgresql
+  namespace: mlops-feast
+  labels:
+    app: feast-postgresql
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgresql
+  selector:
+    app: feast-postgresql
