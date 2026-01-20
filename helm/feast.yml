@@ -1,92 +1,42 @@
-# Feast Feature Store Helm Values
-global:
-  security:
-    allowInsecureImages: true
+# Feast Feature Server Helm Values
+# Chart: feast-charts/feast-feature-server
+# Repo: https://feast-helm-charts.storage.googleapis.com
 
-# Feature Server configuration
-feast-feature-server:
-  enabled: true
-  image:
-    repository: feastdev/feature-server
-    tag: "0.40.1"
+replicaCount: 1
 
-  service:
-    type: NodePort
-    port: 6566
-    nodePort: 30060
+image:
+  repository: feastdev/feature-server
+  pullPolicy: IfNotPresent
+  tag: "0.46.0"
 
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "200m"
-    limits:
-      memory: "1Gi"
-      cpu: "1000m"
+logLevel: "INFO"
 
-# Feast UI configuration
-feast-ui:
-  enabled: true
-  image:
-    repository: feastdev/feast-ui
-    tag: "0.40.1"
+# Feast deployment mode: online, offline, ui, registry
+feast_mode: "ui"
 
-  service:
-    type: NodePort
-    port: 8888
-    nodePort: 30061
+# Base64 encoded feature_store.yaml
+# This configures Feast to use file-based registry (for demo/dev)
+# echo -n '<yaml>' | base64
+# Config: project=mlops, provider=local, registry=file, online_store=sqlite
+feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHBhdGg6IC9hcHAvZGF0YS9yZWdpc3RyeS5kYgpvbmxpbmVfc3RvcmU6CiAgdHlwZTogc3FsaXRlCiAgcGF0aDogL2FwcC9kYXRhL29ubGluZV9zdG9yZS5kYgplbnRpdHlfa2V5X3NlcmlhbGl6YXRpb25fdmVyc2lvbjogMgo="
 
-  resources:
-    requests:
-      memory: "256Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30060
 
-# Registry configuration - use PostgreSQL as registry backend
-postgresql:
-  enabled: true
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/postgresql
-    tag: "17.4.0-debian-12-r0"
-  auth:
-    username: feast
-    password: Moses1749Feast!
-    database: feast_registry
-  primary:
-    persistence:
-      enabled: true
-      storageClass: local-path
-      size: 5Gi
-    resources:
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-      limits:
-        memory: "512Mi"
-        cpu: "500m"
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "200m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
 
-# Redis for online store
-redis:
-  enabled: true
-  architecture: standalone
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/redis
-    tag: "7.4.3-debian-12-r0"
-  auth:
-    enabled: true
-    password: Moses1749FeastRedis!
-  master:
-    persistence:
-      enabled: true
-      storageClass: local-path
-      size: 5Gi
-    resources:
-      requests:
-        memory: "256Mi"
-        cpu: "100m"
-      limits:
-        memory: "512Mi"
-        cpu: "500m"
+livenessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 30
+
+readinessProbe:
+  initialDelaySeconds: 20
+  periodSeconds: 10
