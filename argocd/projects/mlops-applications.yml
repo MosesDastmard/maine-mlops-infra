@@ -5,6 +5,8 @@ kind: AppProject
 metadata:
   name: mlops-applications
   namespace: mlops-ci
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -18,9 +20,7 @@ spec:
   destinations:
     - namespace: services-stream
       server: https://kubernetes.default.svc
-    - namespace: kubeflow
-      server: https://kubernetes.default.svc
-    - namespace: mlops-ml
+    - namespace: mlops-kubeflow
       server: https://kubernetes.default.svc
 
   # Namespace resources only (no cluster-wide resources for applications)
