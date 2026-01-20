@@ -1,4 +1,5 @@
 # Feast UI Deployment
+# Uses the feature-server image with 'feast ui' command
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,8 +19,15 @@ spec:
     spec:
       containers:
       - name: feast-ui
-        image: feastdev/feast-ui:0.40.1
+        image: feastdev/feature-server:0.40.1
         imagePullPolicy: IfNotPresent
+        command: ["feast"]
+        args:
+          - "ui"
+          - "-h"
+          - "0.0.0.0"
+          - "-p"
+          - "8888"
         ports:
         - containerPort: 8888
           name: http
@@ -30,9 +38,7 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
-        env:
-        - name: FEAST_FEATURE_SERVER_URL
-          value: "http://feast-feature-server.mlops-feast.svc.cluster.local:6566"
+        workingDir: /app/feature_repo
         volumeMounts:
         - name: feast-config
           mountPath: /app/feature_repo
