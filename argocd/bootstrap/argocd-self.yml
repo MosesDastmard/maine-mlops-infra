@@ -33,7 +33,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-argo
+    namespace: argocd
 
   syncPolicy:
     automated:
