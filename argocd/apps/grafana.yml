@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://charts.bitnami.com/bitnami
     chart: grafana
-    targetRevision: 11.5.2
+    targetRevision: 12.1.8
     helm:
       releaseName: grafana
       values: |

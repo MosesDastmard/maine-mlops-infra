@@ -16,6 +16,10 @@ spec:
     helm:
       releaseName: mysql
       values: |
+        global:
+          security:
+            allowInsecureImages: true
+
         architecture: replication
 
         auth:

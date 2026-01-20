@@ -20,6 +20,8 @@ spec:
   destinations:
     - namespace: services-stream
       server: https://kubernetes.default.svc
+    - namespace: services-sync
+      server: https://kubernetes.default.svc
     - namespace: mlops-kubeflow
       server: https://kubernetes.default.svc
 
