@@ -29,9 +29,9 @@ spec:
           tag: "17.6.0-debian-12-r4"
 
         auth:
-          postgresPassword: Moses1749FeastAdmin!
+          postgresPassword: Moses1749Admin
           username: feast
-          password: Moses1749Feast!
+          password: Moses1749Feast
           database: feast_registry
 
         primary:
