@@ -40,6 +40,9 @@ spec:
     # Streaming namespace
     - namespace: mlops-stream
       server: https://kubernetes.default.svc
+    # Feature store namespace
+    - namespace: mlops-feast
+      server: https://kubernetes.default.svc
     # Custom services namespace
     - namespace: services-stream
       server: https://kubernetes.default.svc
