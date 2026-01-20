@@ -48,6 +48,8 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: mlops-kubeflow
       server: https://kubernetes.default.svc
+    - namespace: kubeflow
+      server: https://kubernetes.default.svc
     - namespace: mlops-argo-workflows
       server: https://kubernetes.default.svc
     # Feature store
@@ -58,6 +60,9 @@ spec:
       server: https://kubernetes.default.svc
     # Container registry
     - namespace: mlops-registry
+      server: https://kubernetes.default.svc
+    # Ingress
+    - namespace: mlops-traefik
       server: https://kubernetes.default.svc
     # Custom services
     - namespace: services-stream
@@ -80,6 +85,12 @@ spec:
       kind: MutatingWebhookConfiguration
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
+    - group: networking.k8s.io
+      kind: IngressClass
+    - group: storage.k8s.io
+      kind: StorageClass
+    - group: scheduling.k8s.io
+      kind: PriorityClass
 
   # Namespace resource allow list (allow all by default)
   namespaceResourceWhitelist:

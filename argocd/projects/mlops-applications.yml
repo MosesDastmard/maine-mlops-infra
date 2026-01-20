@@ -30,8 +30,10 @@ spec:
     - group: '*'
       kind: '*'
 
-  # Deny cluster resources for application project
-  clusterResourceWhitelist: []
+  # Allow creating namespaces for application deployments
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
 
   orphanedResources:
     warn: true
