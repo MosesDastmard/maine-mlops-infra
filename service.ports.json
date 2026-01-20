@@ -25,7 +25,7 @@
   },
   {
     "service": "feast",
-    "port": "30060",
+    "port": "auto (kubectl get svc feast-feast-feature-server -n mlops-ml -o jsonpath='{.spec.ports[0].nodePort}')",
     "user": null,
     "password": null
   },

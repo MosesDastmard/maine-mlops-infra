@@ -36,17 +36,16 @@ spec:
         #   project: mlops_features
         #   provider: local
         #   registry:
-        #     path: /app/data/registry.db
+        #     path: /tmp/feast/registry.db
         #   online_store:
         #     type: sqlite
-        #     path: /app/data/online_store.db
+        #     path: /tmp/feast/online_store.db
         #   entity_key_serialization_version: 2
-        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHBhdGg6IC9hcHAvZGF0YS9yZWdpc3RyeS5kYgpvbmxpbmVfc3RvcmU6CiAgdHlwZTogc3FsaXRlCiAgcGF0aDogL2FwcC9kYXRhL29ubGluZV9zdG9yZS5kYgplbnRpdHlfa2V5X3NlcmlhbGl6YXRpb25fdmVyc2lvbjogMgo="
+        feature_store_yaml_base64: "cHJvamVjdDogbWxvcHNfZmVhdHVyZXMKcHJvdmlkZXI6IGxvY2FsCnJlZ2lzdHJ5OgogIHBhdGg6IC90bXAvZmVhc3QvcmVnaXN0cnkuZGIKb25saW5lX3N0b3JlOgogIHR5cGU6IHNxbGl0ZQogIHBhdGg6IC90bXAvZmVhc3Qvb25saW5lX3N0b3JlLmRiCmVudGl0eV9rZXlfc2VyaWFsaXphdGlvbl92ZXJzaW9uOiAyCg=="
 
         service:
           type: NodePort
           port: 80
-          nodePort: 30060
 
         resources:
           requests:
