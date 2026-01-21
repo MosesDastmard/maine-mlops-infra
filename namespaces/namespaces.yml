@@ -101,6 +101,13 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: mlops-flink
+  labels:
+    app.kubernetes.io/managed-by: argocd
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: argocd
   labels:
     app.kubernetes.io/managed-by: argocd

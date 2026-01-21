@@ -49,6 +49,12 @@ spec:
 
         architecture: standalone
 
+        primary:
+          service:
+            type: NodePort
+            nodePorts:
+              postgresql: 31432
+
   destination:
     server: https://kubernetes.default.svc
     namespace: mlops-feast

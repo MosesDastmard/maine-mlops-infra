@@ -41,6 +41,8 @@ spec:
     # Streaming
     - namespace: mlops-kafka
       server: https://kubernetes.default.svc
+    - namespace: mlops-flink
+      server: https://kubernetes.default.svc
     # ML Platform
     - namespace: mlops-mlflow
       server: https://kubernetes.default.svc

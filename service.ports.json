@@ -88,5 +88,12 @@
     "port": "30500",
     "user": null,
     "password": null
+  },
+  {
+    "service": "flink-ui",
+    "port": "30081",
+    "user": null,
+    "password": null,
+    "note": "Per-job UI available via FlinkDeployment REST service"
   }
 ]

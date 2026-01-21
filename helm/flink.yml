@@ -1,0 +1,86 @@
+# Flink Kubernetes Operator Helm Values
+# Chart: flink-kubernetes-operator
+# Repo: https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/
+#
+# This operator enables deploying Flink applications via FlinkDeployment CRD
+# Integrates with existing Kafka cluster at mlops-kafka namespace
+
+# Operator image configuration
+image:
+  repository: apache/flink-kubernetes-operator
+  pullPolicy: IfNotPresent
+  tag: "1.10.0"
+
+# Flink image used by default for FlinkDeployments
+defaultConfiguration:
+  # Default Flink version for new deployments
+  flink-conf.yaml: |
+    # Checkpointing & State
+    execution.checkpointing.interval: 60000
+    execution.checkpointing.mode: EXACTLY_ONCE
+    state.backend.type: rocksdb
+    state.checkpoints.dir: file:///flink-data/checkpoints
+    state.savepoints.dir: file:///flink-data/savepoints
+    
+    # High Availability (Kubernetes-native)
+    high-availability.type: kubernetes
+    high-availability.storageDir: file:///flink-data/ha
+    
+    # Resource Management
+    taskmanager.memory.process.size: 1728m
+    jobmanager.memory.process.size: 1600m
+    taskmanager.numberOfTaskSlots: 2
+    
+    # Web UI
+    rest.port: 8081
+    rest.address: 0.0.0.0
+    
+    # Metrics (Prometheus compatible)
+    metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+    metrics.reporter.prom.port: 9249
+
+# Operator webhook configuration
+webhook:
+  create: true
+  mutator:
+    create: true
+  validator:
+    create: true
+
+# Operator resources
+operatorResources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Watch namespaces (empty = all namespaces)
+watchNamespaces:
+  - mlops-flink
+
+# RBAC
+rbac:
+  create: true
+
+# Service Account
+serviceAccount:
+  create: true
+  name: flink-operator
+
+# Operator Pod configuration
+operatorPod:
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9249"
+
+# Logging
+logConfiguration:
+  rootLogger.level: INFO
+  logger.operator.name: org.apache.flink.kubernetes.operator
+  logger.operator.level: INFO
+
+# Job namespace RBAC (allows operator to manage Flink jobs)
+operatorClusterRole:
+  create: true

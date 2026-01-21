@@ -46,6 +46,10 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          service:
+            type: NodePort
+            nodePorts:
+              redis: "31379"
 
   destination:
     server: https://kubernetes.default.svc

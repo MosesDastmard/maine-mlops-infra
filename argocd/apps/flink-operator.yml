@@ -1,0 +1,97 @@
+# ArgoCD Application: Flink Kubernetes Operator
+# Enables Apache Flink workloads on Kubernetes via FlinkDeployment CRD
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flink-operator
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://downloads.apache.org/flink/flink-kubernetes-operator-1.10.0/
+    chart: flink-kubernetes-operator
+    targetRevision: 1.10.0
+    helm:
+      releaseName: flink-operator
+      values: |
+        # Operator image configuration
+        image:
+          repository: apache/flink-kubernetes-operator
+          pullPolicy: IfNotPresent
+          tag: "1.10.0"
+
+        # Default Flink configuration for deployments
+        defaultConfiguration:
+          create: true
+          append: true
+          flink-conf.yaml: |
+            # Checkpointing & State
+            execution.checkpointing.interval: 60000
+            execution.checkpointing.mode: EXACTLY_ONCE
+            state.backend.type: hashmap
+            
+            # High Availability (Kubernetes-native)
+            high-availability.type: kubernetes
+            
+            # Resource Management
+            taskmanager.memory.process.size: 1728m
+            jobmanager.memory.process.size: 1600m
+            taskmanager.numberOfTaskSlots: 2
+            
+            # Web UI
+            rest.port: 8081
+            rest.address: 0.0.0.0
+            
+            # Metrics (Prometheus compatible)
+            metrics.reporter.prom.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+            metrics.reporter.prom.port: 9249
+
+        # Webhook configuration (disabled - requires cert-manager)
+        webhook:
+          create: false
+          mutator:
+            create: false
+          validator:
+            create: false
+
+        # Operator resources
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+        # Watch only mlops-flink namespace
+        watchNamespaces:
+          - mlops-flink
+
+        # RBAC & Service Account
+        rbac:
+          create: true
+        serviceAccount:
+          create: true
+          name: flink-operator
+
+        # Operator Pod annotations for Prometheus
+        podAnnotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9249"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-flink
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
