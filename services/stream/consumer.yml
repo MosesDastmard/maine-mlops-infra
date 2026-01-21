@@ -1,49 +1,61 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: flink.apache.org/v1beta1
+kind: FlinkDeployment
 metadata:
-  name: services-stream-consumer
-  namespace: services-stream
+  name: stream-consumer
+  namespace: mlops-flink
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: services-stream-consumer
-  template:
-    metadata:
-      labels:
-        app: services-stream-consumer
+  image: dastmard/maine-flink-raw-sale-consumer:latest
+  imagePullPolicy: Always
+  flinkVersion: v1_19
+  flinkConfiguration:
+    taskmanager.numberOfTaskSlots: "2"
+    state.backend.type: hashmap
+    execution.checkpointing.interval: "60000"
+    execution.checkpointing.mode: EXACTLY_ONCE
+    # Disable HA for simple deployment (no storageDir needed)
+    high-availability.type: none
+    # Prevent read-only filesystem issues
+    kubernetes.operator.dynamic.config.enabled: "false"
+    web.tmpdir: /tmp
+    io.tmp.dirs: /tmp
+  serviceAccount: flink
+  jobManager:
+    resource:
+      memory: "1024m"
+      cpu: 0.5
+    replicas: 1
+  taskManager:
+    resource:
+      memory: "4Gi"
+      cpu: 2
+    replicas: 1
+  podTemplate:
     spec:
       containers:
-      - name: api
-        image: dastmard/maine-stream-consumer:latest
-        imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: "2000m"
-            memory: "4Gi"
-          limits:
-            cpu: "4000m"
-            memory: "8Gi"
-        env:
-        - name: PYTHONUNBUFFERED
-          value: "1"
-        - name: NODE_ENV
-          value: "production"
-        - name: KAFKA_BOOTSTRAP_SERVERS
-          value: "kafka-kafka-bootstrap.mlops-kafka.svc.cluster.local:9092"
-        - name: KAFKA_TOPIC
-          value: "maine-sales"
-        - name: DB_HOST
-          value: "timescaledb-postgresql.mlops-timescaledb.svc.cluster.local"
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_NAME
-          value: "maine"
-        - name: DB_USER
-          value: "mlops"
-        - name: DB_PASSWORD
-          value: "Moses1749Timescale!"
-        - name: TABLE_NAME
-          value: "historical.sales"
-        - name: DEBUG
-          value: "false"
+        - name: flink-main-container
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka-kafka-bootstrap.mlops-kafka.svc.cluster.local:9092"
+            - name: KAFKA_TOPIC
+              value: "maine-sales"
+            - name: DB_HOST
+              value: "timescaledb-postgresql.mlops-timescaledb.svc.cluster.local"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "maine"
+            - name: DB_USER
+              value: "mlops"
+            - name: DB_PASSWORD
+              value: "Moses1749Timescale!"
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+  job:
+    jarURI: local:///opt/flink/usrlib/raw-stream-consumer.jar
+    parallelism: 2
+    upgradeMode: stateless
+    entryClass: com.maine.flink.StreamConsumer
