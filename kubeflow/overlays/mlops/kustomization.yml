@@ -9,8 +9,20 @@ namespace: mlops-kubeflow
 resources:
   - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.4.0
   - s3-secret.yml
+  - namespace.yml
 
-# Patches to remove minio and configure external S3
+# Replace kubeflow namespace references in ClusterRoleBindings
+replacements:
+  - source:
+      kind: Namespace
+      name: mlops-kubeflow
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: ClusterRoleBinding
+        fieldPaths:
+          - subjects.*.namespace
+
 patches:
   # Remove minio deployment
   - target:

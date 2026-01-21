@@ -1,0 +1,5 @@
+# Namespace for Kubeflow Pipelines
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mlops-kubeflow
