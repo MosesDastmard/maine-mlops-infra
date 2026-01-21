@@ -14,13 +14,13 @@ spec:
 
   # Deploy cluster-scoped resources first
   source:
-    repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git
-    targetRevision: HEAD
-    path: kubeflow/overlays/mlops
+    repoURL: https://github.com/kubeflow/pipelines.git
+    targetRevision: 2.4.0
+    path: manifests/kustomize/env/platform-agnostic-emissary
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: mlops-kubeflow
+    namespace: kubeflow
 
   syncPolicy:
     automated:
