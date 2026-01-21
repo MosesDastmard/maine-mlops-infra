@@ -72,12 +72,41 @@ primary:
           -- Enable TimescaleDB extension
           CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
           
-          -- Create historical schema for sales data
-          CREATE SCHEMA IF NOT EXISTS historical;
+          -- Create sales schema for sales data
+          CREATE SCHEMA IF NOT EXISTS sales;
           
           -- Grant permissions
-          GRANT ALL PRIVILEGES ON SCHEMA historical TO mlops;
-          ALTER DEFAULT PRIVILEGES IN SCHEMA historical GRANT ALL PRIVILEGES ON TABLES TO mlops;
+          GRANT ALL PRIVILEGES ON SCHEMA sales TO mlops;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA sales GRANT ALL PRIVILEGES ON TABLES TO mlops;
+
+          -- Create sales schema for sales data
+          CREATE SCHEMA IF NOT EXISTS products;
+          
+          -- Grant permissions
+          GRANT ALL PRIVILEGES ON SCHEMA products TO mlops;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA products GRANT ALL PRIVILEGES ON TABLES TO mlops;
+
+          -- Create orders schema for orders data
+          CREATE SCHEMA IF NOT EXISTS orders;
+          
+          -- Grant permissions
+          GRANT ALL PRIVILEGES ON SCHEMA orders TO mlops;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA orders GRANT ALL PRIVILEGES ON TABLES TO mlops;
+
+          -- Create suppliers schema for suppliers data
+          CREATE SCHEMA IF NOT EXISTS suppliers;
+          
+          -- Grant permissions
+          GRANT ALL PRIVILEGES ON SCHEMA suppliers TO mlops;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA suppliers GRANT ALL PRIVILEGES ON TABLES TO mlops;
+
+
+          -- Create snapshots schema for snapshots data
+          CREATE SCHEMA IF NOT EXISTS snapshots;
+          
+          -- Grant permissions
+          GRANT ALL PRIVILEGES ON SCHEMA snapshots TO mlops;
+          ALTER DEFAULT PRIVILEGES IN SCHEMA snapshots GRANT ALL PRIVILEGES ON TABLES TO mlops;
         EOSQL
 
 # Disable replication for single-node setup
