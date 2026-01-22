@@ -1,10 +1,10 @@
 apiVersion: flink.apache.org/v1beta1
 kind: FlinkDeployment
 metadata:
-  name: stream-consumer
+  name: stream-daily-consumer
   namespace: mlops-flink
 spec:
-  image: dastmard/maine-flink-raw-sale-consumer:latest
+  image: dastmard/maine-flink-daily-sale-consumer:latest
   imagePullPolicy: Always
   flinkVersion: v1_19
   flinkConfiguration:
@@ -57,7 +57,7 @@ spec:
         - name: tmp-volume
           emptyDir: {}
   job:
-    jarURI: local:///opt/flink/usrlib/raw-stream-consumer.jar
+    jarURI: local:///opt/flink/usrlib/daily-stream-consumer.jar
     parallelism: 2
     upgradeMode: stateless
     entryClass: com.maine.flink.StreamConsumer

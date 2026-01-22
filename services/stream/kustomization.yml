@@ -6,5 +6,7 @@ namespace: services-stream
 
 resources:
   - namespace.yml
-  - consumer.yml
   - producer.yml
+  - raw-consumer.yaml
+  - daily-consumer.yaml
+  - weekly-consumer.yaml

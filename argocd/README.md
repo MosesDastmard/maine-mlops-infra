@@ -26,7 +26,7 @@ argocd/
 │   ├── argo-workflows.yml   # Argo Workflows
 │   ├── kubeflow-crds.yml    # Kubeflow CRDs
 │   ├── kubeflow-pipelines.yml # Kubeflow Pipelines
-│   └── services-stream-consumer.yml # Custom app
+│   └── services-stream-raw-consumer.yml # Custom app
 ├── appsets/                 # ApplicationSets for grouped management
 │   ├── databases.yml        # Database services group
 │   ├── monitoring.yml       # Monitoring services group
