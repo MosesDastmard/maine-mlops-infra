@@ -23,10 +23,10 @@ spec:
         architecture: replication
 
         auth:
-          rootPassword: "Moses1749"
+          rootPassword: "4k0pYu4JMcZlG8KP"
           username: "admin"
-          password: "Moses1749"
-          replicationPassword: "Moses1749"
+          password: "4k0pYu4JMcZlG8KP"
+          replicationPassword: "4k0pYu4JMcZlG8KP"
 
         image:
           registry: docker.io

@@ -39,7 +39,7 @@ spec:
           auth:
             enabled: true
             username: admin
-            password: Moses1749MLflow!
+            password: 4k0pYu4JMcZlG8KPMLflow!
           service:
             type: NodePort
             ports:
@@ -62,7 +62,7 @@ spec:
             tag: "17.4.0-debian-12-r0"
           auth:
             username: mlflow
-            password: Moses1749
+            password: 4k0pYu4JMcZlG8KP
             database: mlflow
 
         minio:

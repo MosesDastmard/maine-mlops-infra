@@ -15,9 +15,9 @@ service:
 # Secrets configuration
 secrets:
   # PostgreSQL connection string (using bundled dev postgres)
-  databaseConnectionString: "postgres://lakefs:Moses1749@lakefs-postgresql:5432/lakefs?sslmode=disable"
+  databaseConnectionString: "postgres://lakefs:4k0pYu4JMcZlG8KP@lakefs-postgresql:5432/lakefs?sslmode=disable"
   # Auth encryption key (must be at least 32 characters)
-  authEncryptSecretKey: "Moses1749LakeFSAuthEncryptKey32!"
+  authEncryptSecretKey: "4k0pYu4JMcZlG8KPLakeFSAuthEncryptKey32!"
 
 # LakeFS configuration
 lakefsConfig: |
@@ -33,7 +33,7 @@ lakefsConfig: |
         secret_access_key: cef53ab2058a29fb76de4765e71cece1
   auth:
     encrypt:
-      secret_key: Moses1749LakeFSAuthEncryptKey32!
+      secret_key: 4k0pYu4JMcZlG8KPLakeFSAuthEncryptKey32!
     ui_config:
       login_cookie_names:
         - internal_auth_session
@@ -46,7 +46,7 @@ postgresql:
   enabled: true
   auth:
     username: lakefs
-    password: Moses1749
+    password: 4k0pYu4JMcZlG8KP
     database: lakefs
   primary:
     persistence:

@@ -37,7 +37,7 @@ spec:
           config:
             users:
               - username: admin
-                password: Moses1749KafkaUI!
+                password: 4k0pYu4JMcZlG8KPKafkaUI!
                 role: ADMIN
 
         service:

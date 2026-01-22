@@ -28,9 +28,9 @@ spec:
           tag: pg16.11-ts2.24.0-all
 
         auth:
-          postgresPassword: Moses1749TimescaleAdmin!
+          postgresPassword: 4k0pYu4JMcZlG8KPTimescaleAdmin!
           username: mlops
-          password: Moses1749Timescale!
+          password: 4k0pYu4JMcZlG8KPTimescale!
 
         primary:
           podAnnotations:

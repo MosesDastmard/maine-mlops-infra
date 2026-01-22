@@ -18,7 +18,7 @@ spec:
       values: |
         admin:
           user: admin
-          password: Moses1749
+          password: 4k0pYu4JMcZlG8KP
 
         image:
           registry: docker.io

@@ -51,10 +51,10 @@ spec:
         auth:
           enabled: true
           rootUser: admin
-          rootPassword: Moses1749
+          rootPassword: 4k0pYu4JMcZlG8KP
           database: mlops
           username: moses
-          password: Moses1749
+          password: 4k0pYu4JMcZlG8KP
 
         persistence:
           enabled: true

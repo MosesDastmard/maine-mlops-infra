@@ -13,9 +13,9 @@ image:
 
 # Authentication
 auth:
-  postgresPassword: Moses1749TimescaleAdmin!
+  postgresPassword: 4k0pYu4JMcZlG8KPTimescaleAdmin!
   username: mlops
-  password: Moses1749Timescale!
+  password: 4k0pYu4JMcZlG8KPTimescale!
 
 # Primary configuration
 primary:

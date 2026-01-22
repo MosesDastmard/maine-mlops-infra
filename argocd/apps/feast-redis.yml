@@ -32,7 +32,7 @@ spec:
 
         auth:
           enabled: true
-          password: Moses1749FeastRedis!
+          password: 4k0pYu4JMcZlG8KPFeastRedis!
 
         master:
           persistence:

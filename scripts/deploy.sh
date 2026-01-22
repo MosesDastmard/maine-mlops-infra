@@ -82,7 +82,7 @@ kubectl create namespace container-registry --dry-run=client -o yaml | kubectl a
 kubectl apply -f "$SCRIPT_DIR/secrets.yml"
 
 # Create htpasswd auth secret
-htpasswd -B -b -c /tmp/htpasswd admin Moses1749
+htpasswd -B -b -c /tmp/htpasswd admin 4k0pYu4JMcZlG8KP
 kubectl create secret generic registry-auth \
   --from-file=htpasswd=/tmp/htpasswd \
   -n container-registry --dry-run=client -o yaml | kubectl apply -f -
