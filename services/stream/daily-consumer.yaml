@@ -28,8 +28,8 @@ spec:
     replicas: 1
   taskManager:
     resource:
-      memory: "4Gi"
-      cpu: 2
+      memory: "2Gi"
+      cpu: 1
     replicas: 1
   podTemplate:
     spec:
@@ -58,6 +58,6 @@ spec:
           emptyDir: {}
   job:
     jarURI: local:///opt/flink/usrlib/daily-stream-consumer.jar
-    parallelism: 2
+    parallelism: 1
     upgradeMode: stateless
     entryClass: com.maine.flink.StreamConsumer

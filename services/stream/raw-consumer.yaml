@@ -58,6 +58,6 @@ spec:
           emptyDir: {}
   job:
     jarURI: local:///opt/flink/usrlib/raw-stream-consumer.jar
-    parallelism: 2
+    parallelism: 1
     upgradeMode: stateless
     entryClass: com.maine.flink.StreamConsumer

@@ -1,0 +1,19 @@
+# Longhorn Helm values for disk resilience
+replicaCount: 2
+# Additional recommended values for Longhorn
+defaultSettings:
+  replicaAutoBalance: "best-effort"
+  replicaSoftAntiAffinity: "true"
+persistence:
+  defaultClass: true
+  defaultFsType: ext4
+  reclaimPolicy: Delete
+recurringJobSelector: {}
+# You can add more custom values as needed for your environment
+# Example:
+# defaultSettings:
+#   backupTarget: ''
+#   defaultReplicaCount: 2
+#   defaultDataPath: /var/lib/longhorn
+#   replicaSoftAntiAffinity: true
+#   nodeDownPodDeletionPolicy: delete
