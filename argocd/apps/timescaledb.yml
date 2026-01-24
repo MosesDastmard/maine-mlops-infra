@@ -70,6 +70,7 @@ spec:
             wal_buffers = 64MB
             min_wal_size = 512MB
             max_wal_size = 2GB
+            max_locks_per_transaction = 256
 
         architecture: standalone
 

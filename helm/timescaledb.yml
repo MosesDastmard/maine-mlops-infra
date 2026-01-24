@@ -55,6 +55,7 @@ primary:
     wal_buffers = 64MB
     min_wal_size = 512MB
     max_wal_size = 2GB
+    max_locks_per_transaction = 256
 
   # Init scripts to create maine database and historical schema
   initdb:

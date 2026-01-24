@@ -1,10 +1,10 @@
 apiVersion: flink.apache.org/v1beta1
 kind: FlinkDeployment
 metadata:
-  name: stream-daily-consumer
+  name: stream-trans-consumer
   namespace: mlops-flink
 spec:
-  image: dastmard/maine-flink-daily-sale-consumer:latest
+  image: dastmard/maine-flink-trans-sale-consumer:latest
   imagePullPolicy: Always
   flinkVersion: v1_19
   flinkConfiguration:
@@ -28,8 +28,8 @@ spec:
     replicas: 1
   taskManager:
     resource:
-      memory: "2Gi"
-      cpu: 1
+      memory: "4Gi"
+      cpu: 2
     replicas: 1
   podTemplate:
     spec:
@@ -57,7 +57,7 @@ spec:
         - name: tmp-volume
           emptyDir: {}
   job:
-    jarURI: local:///opt/flink/usrlib/daily-stream-consumer.jar
+    jarURI: local:///opt/flink/usrlib/trans-stream-consumer.jar
     parallelism: 1
     upgradeMode: stateless
     entryClass: com.maine.flink.StreamConsumer

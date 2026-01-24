@@ -6,7 +6,6 @@ namespace: services-stream
 
 resources:
   - namespace.yml
+  - flink-checkpoints-pvc.yaml
   - producer.yml
-  - raw-consumer.yaml
-  - daily-consumer.yaml
-  - weekly-consumer.yaml
+  - trans-consumer.yaml
