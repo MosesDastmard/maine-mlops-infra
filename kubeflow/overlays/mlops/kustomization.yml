@@ -63,6 +63,17 @@ patches:
       metadata:
         name: minio-pvc
 
+  # Remove original mlpipeline-minio-artifact secret (we define our own with S3 creds)
+  - target:
+      kind: Secret
+      name: mlpipeline-minio-artifact
+    patch: |
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: mlpipeline-minio-artifact
+
   # Patch ml-pipeline-api-server to use external S3
   - target:
       kind: Deployment
