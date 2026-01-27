@@ -15,6 +15,7 @@ resources:
   - rbac.yml
   - minio-external-service.yml
   - webhook-tls-secret.yml
+  - artifact-secret.yml
 
 # Replace kubeflow namespace references in ClusterRoleBindings
 replacements:
@@ -154,6 +155,7 @@ patches:
         value: local-path
 
   # Patch workflow-controller-configmap to inject KFP_POD_NAME and KFP_POD_UID env vars
+  # and use external S3 for artifact repository
   - target:
       kind: ConfigMap
       name: workflow-controller-configmap
@@ -174,3 +176,18 @@ patches:
                       valueFrom:
                         fieldRef:
                           fieldPath: metadata.uid
+      - op: replace
+        path: /data/artifactRepository
+        value: |
+          archiveLogs: true
+          s3:
+            endpoint: "eu2.contabostorage.com"
+            bucket: "kubeflow-pipelines"
+            keyFormat: "artifacts/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}"
+            insecure: false
+            accessKeySecret:
+              name: mlpipeline-minio-artifact
+              key: accesskey
+            secretKeySecret:
+              name: mlpipeline-minio-artifact
+              key: secretkey
