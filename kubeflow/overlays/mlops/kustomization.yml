@@ -122,3 +122,15 @@ patches:
         value:
           name: OBJECTSTORECONFIG_BUCKETNAME
           value: "kubeflow-pipelines"
+
+  # Expose ml-pipeline-ui via NodePort
+  - target:
+      kind: Service
+      name: ml-pipeline-ui
+    patch: |
+      - op: replace
+        path: /spec/type
+        value: NodePort
+      - op: add
+        path: /spec/ports/0/nodePort
+        value: 30030
