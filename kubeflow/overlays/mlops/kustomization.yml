@@ -226,3 +226,20 @@ patches:
         value: |
           image: quay.io/argoproj/argoexec:v3.4.17
           imagePullPolicy: IfNotPresent
+  # Patch workflow-controller deployment to use working argoexec image
+  # The gcr.io/ml-pipeline/argoexec:v3.4.17-license-compliance image doesn't exist
+  - target:
+      kind: Deployment
+      name: workflow-controller
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/args
+        value:
+          - --configmap
+          - workflow-controller-configmap
+          - --executor-image
+          - quay.io/argoproj/argoexec:v3.4.17
+          - --namespaced
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: quay.io/argoproj/workflow-controller:v3.4.17
