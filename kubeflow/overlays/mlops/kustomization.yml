@@ -133,6 +133,22 @@ patches:
           name: OBJECTSTORECONFIG_BUCKETNAME
           value: "kubeflow-pipelines"
 
+  # Patch ml-pipeline-ui to add MLMD envoy service connection env vars
+  - target:
+      kind: Deployment
+      name: ml-pipeline-ui
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: METADATA_ENVOY_SERVICE_SERVICE_HOST
+          value: "metadata-envoy-service"
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: METADATA_ENVOY_SERVICE_SERVICE_PORT
+          value: "9090"
+
   # Expose ml-pipeline-ui via NodePort
   - target:
       kind: Service
