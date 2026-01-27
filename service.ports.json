@@ -24,12 +24,6 @@
     "password": "4k0pYu4JMcZlG8KPMLflow!"
   },
   {
-    "service": "feast",
-    "port": "auto (kubectl get svc feast-feast-feature-server -n mlops-ml -o jsonpath='{.spec.ports[0].nodePort}')",
-    "user": null,
-    "password": null
-  },
-  {
     "service": "jenkins",
     "port": "30080",
     "user": "admin",

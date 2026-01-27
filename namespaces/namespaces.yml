@@ -31,13 +31,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: mlops-feast
-  labels:
-    app.kubernetes.io/managed-by: argocd
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: mlops-jenkins
   labels:
     app.kubernetes.io/managed-by: argocd

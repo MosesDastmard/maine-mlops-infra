@@ -37,11 +37,6 @@ resources:
   - apps/lakefs-postgresql.yml
   - apps/lakefs.yml
 
-  # Feature Store
-  - apps/feast-postgresql.yml
-  - apps/feast-redis.yml
-  - apps/feast.yml
-
   # Kubeflow
   - apps/kubeflow-crds.yml
   - apps/argo-workflows.yml
