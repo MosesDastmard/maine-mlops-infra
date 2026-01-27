@@ -191,3 +191,8 @@ patches:
             secretKeySecret:
               name: mlpipeline-minio-artifact
               key: secretkey
+      - op: replace
+        path: /data/executor
+        value: |
+          image: quay.io/argoproj/argoexec:v3.4.17
+          imagePullPolicy: IfNotPresent
