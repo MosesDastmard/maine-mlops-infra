@@ -1,5 +1,5 @@
 # ArgoCD Application: Kubeflow Pipelines
-# Uses Kustomize to deploy from official Kubeflow manifests
+# Uses local Kustomize overlay with external S3 and fixes
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -12,15 +12,14 @@ metadata:
 spec:
   project: mlops-infrastructure
 
-  # Deploy cluster-scoped resources first
   source:
-    repoURL: https://github.com/kubeflow/pipelines.git
-    targetRevision: 2.4.0
-    path: manifests/kustomize/env/platform-agnostic-emissary
+    repoURL: https://github.com/MosesDastmard/maine-mlops-infra.git
+    targetRevision: HEAD
+    path: kubeflow/overlays/mlops
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubeflow
+    namespace: mlops-kubeflow
 
   syncPolicy:
     automated:

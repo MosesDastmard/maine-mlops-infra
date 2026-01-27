@@ -1,0 +1,18 @@
+# ExternalName service pointing to Contabo S3
+# Replaces the deleted minio-service with external S3 endpoint
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+  labels:
+    application-crd-id: kubeflow-pipelines
+spec:
+  type: ExternalName
+  externalName: eu2.contabostorage.com
+  ports:
+    - name: https
+      port: 443
+      protocol: TCP
+    - name: http
+      port: 9000
+      protocol: TCP

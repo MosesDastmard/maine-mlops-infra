@@ -1,6 +1,8 @@
 # Kustomize overlay for Kubeflow Pipelines
 # - Changes namespace from kubeflow to mlops-kubeflow
 # - Removes minio (uses external Contabo S3)
+# - Adds RBAC for pipeline-runner workflowtaskresults
+# - Uses local-path storage for MySQL
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -10,6 +12,8 @@ resources:
   - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.4.0
   - s3-secret.yml
   - namespace.yml
+  - rbac.yml
+  - minio-external-service.yml
 
 # Replace kubeflow namespace references in ClusterRoleBindings
 replacements:
@@ -134,3 +138,12 @@ patches:
       - op: add
         path: /spec/ports/0/nodePort
         value: 30030
+
+  # Use local-path storage class for MySQL PVC
+  - target:
+      kind: PersistentVolumeClaim
+      name: mysql-pv-claim
+    patch: |
+      - op: add
+        path: /spec/storageClassName
+        value: local-path

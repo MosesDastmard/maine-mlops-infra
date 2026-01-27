@@ -1,0 +1,29 @@
+# RBAC for pipeline-runner to create workflowtaskresults
+# Required for Kubeflow Pipelines 2.x with Argo Workflows emissary executor
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pipeline-runner-argo-workflows
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - workflowtaskresults
+  verbs:
+  - create
+  - patch
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pipeline-runner-argo-workflows
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pipeline-runner-argo-workflows
+subjects:
+- kind: ServiceAccount
+  name: pipeline-runner
