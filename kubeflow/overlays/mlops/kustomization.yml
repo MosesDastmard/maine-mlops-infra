@@ -152,3 +152,25 @@ patches:
       - op: add
         path: /spec/storageClassName
         value: local-path
+
+  # Patch workflow-controller-configmap to inject KFP_POD_NAME and KFP_POD_UID env vars
+  - target:
+      kind: ConfigMap
+      name: workflow-controller-configmap
+    patch: |
+      - op: add
+        path: /data/workflowDefaults
+        value: |
+          spec:
+            podSpecPatch: |
+              containers:
+                - name: main
+                  env:
+                    - name: KFP_POD_NAME
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.name
+                    - name: KFP_POD_UID
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.uid
