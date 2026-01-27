@@ -105,7 +105,10 @@ patches:
                 name: kubeflow-s3-credentials
                 key: secretAccessKey
           - name: DBCONFIG_USER
-            value: root
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: username
           - name: DBCONFIG_PASSWORD
             valueFrom:
               secretKeyRef:
