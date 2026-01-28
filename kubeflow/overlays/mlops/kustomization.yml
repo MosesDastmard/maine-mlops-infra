@@ -1,21 +1,15 @@
-# Kustomize overlay for Kubeflow Pipelines
-# - Changes namespace from kubeflow to mlops-kubeflow
-# - Removes minio (uses external Contabo S3)
-# - Adds RBAC for pipeline-runner workflowtaskresults
-# - Uses local-path storage for MySQL
+# Kustomize overlay for Kubeflow Pipelines 2.12.0
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: mlops-kubeflow
 
 resources:
-  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.15.0
+  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.12.0
   - namespace.yml
   - rbac.yml
   - webhook-tls-secret.yml
-  - ml-pipeline-ui-ingress.yml
 
-# Replace kubeflow namespace references in ClusterRoleBindings
 replacements:
   - source:
       kind: Namespace
@@ -28,7 +22,6 @@ replacements:
           - subjects.*.namespace
 
 patches:
-  # Patch ml-pipeline-ui to add MLMD envoy service connection env vars
   - target:
       kind: Deployment
       name: ml-pipeline-ui
@@ -43,8 +36,11 @@ patches:
         value:
           name: METADATA_ENVOY_SERVICE_SERVICE_PORT
           value: "9090"
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/hostname: vmi3021562
 
-  # Expose ml-pipeline-ui via NodePort
   - target:
       kind: Service
       name: ml-pipeline-ui
@@ -52,21 +48,10 @@ patches:
       - op: replace
         path: /spec/type
         value: NodePort
-      - op: replace
+      - op: add
         path: /spec/ports/0/nodePort
         value: 30000
 
-  # Pin ml-pipeline-ui to control-plane node for direct NodePort access
-  - target:
-      kind: Deployment
-      name: ml-pipeline-ui
-    patch: |
-      - op: add
-        path: /spec/template/spec/nodeSelector
-        value:
-          kubernetes.io/hostname: vmi3021562
-
-  # Use local-path storage class for MySQL PVC
   - target:
       kind: PersistentVolumeClaim
       name: mysql-pv-claim
@@ -75,44 +60,22 @@ patches:
         path: /spec/storageClassName
         value: local-path
 
-  # Use local-path storage class for SeaweedFS PVC
   - target:
       kind: PersistentVolumeClaim
-      name: seaweedfs-pvc
+      name: minio-pvc
     patch: |
       - op: add
         path: /spec/storageClassName
         value: local-path
 
-  # Fix ml-pipeline object store config for SeaweedFS in mlops-kubeflow namespace
   - target:
       kind: Deployment
-      name: ml-pipeline
+      name: minio
     patch: |
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: ml-pipeline
-      spec:
-        template:
-          spec:
-            containers:
-              - name: ml-pipeline-api-server
-                env:
-                  - name: OBJECTSTORECONFIG_HOST
-                    value: "seaweedfs"
-                  - name: OBJECTSTORECONFIG_PORT
-                    value: "8333"
-
-  # Fix SeaweedFS permissions
-  - target:
-      kind: Deployment
-      name: seaweedfs
-    patch: |
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: seaweedfs
+        name: minio
       spec:
         template:
           spec:
@@ -129,8 +92,15 @@ patches:
                 volumeMounts:
                   - name: data
                     mountPath: /data
+                    subPath: minio
+            containers:
+              - name: minio
+                image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+                securityContext:
+                  runAsUser: 1000
+                  runAsGroup: 1000
+                  runAsNonRoot: true
 
-  # Patch workflow-controller-configmap to inject KFP_POD_NAME and KFP_POD_UID env vars
   - target:
       kind: ConfigMap
       name: workflow-controller-configmap
@@ -156,14 +126,13 @@ patches:
                         name: metadata-grpc-configmap
                         optional: true
                     - secretRef:
-                        name: mlpipeline-seaweedfs-artifact
+                        name: mlpipeline-minio-artifact
       - op: replace
         path: /data/executor
         value: |
           image: quay.io/argoproj/argoexec:v3.4.17
           imagePullPolicy: IfNotPresent
-  # Patch workflow-controller deployment to use working argoexec image
-  # The gcr.io/ml-pipeline/argoexec:v3.4.17-license-compliance image doesn't exist
+
   - target:
       kind: Deployment
       name: workflow-controller
