@@ -243,6 +243,10 @@ patches:
                       value: "https://eu2.contabostorage.com"
                     - name: AWS_S3_ENDPOINT
                       value: "https://eu2.contabostorage.com"
+                    - name: AWS_REGION
+                      value: "eu2"
+                    - name: AWS_DEFAULT_REGION
+                      value: "eu2"
                   envFrom:
                     - configMapRef:
                         name: metadata-grpc-configmap
