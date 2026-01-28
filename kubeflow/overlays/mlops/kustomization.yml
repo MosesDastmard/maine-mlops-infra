@@ -9,7 +9,7 @@ kind: Kustomization
 namespace: mlops-kubeflow
 
 resources:
-  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary-minio?ref=2.15.0
+  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.15.0
   - namespace.yml
   - rbac.yml
   - webhook-tls-secret.yml
@@ -64,15 +64,24 @@ patches:
         path: /spec/storageClassName
         value: local-path
 
-  # Fix MinIO image tag and permissions
+  # Use local-path storage class for SeaweedFS PVC
+  - target:
+      kind: PersistentVolumeClaim
+      name: seaweedfs-pvc
+    patch: |
+      - op: add
+        path: /spec/storageClassName
+        value: local-path
+
+  # Fix SeaweedFS permissions
   - target:
       kind: Deployment
-      name: minio
+      name: seaweedfs
     patch: |
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: minio
+        name: seaweedfs
       spec:
         template:
           spec:
@@ -89,17 +98,8 @@ patches:
                 volumeMounts:
                   - name: data
                     mountPath: /data
-                    subPath: minio
-            containers:
-              - name: minio
-                image: minio/minio:RELEASE.2024-01-16T16-07-38Z
-                securityContext:
-                  runAsUser: 1000
-                  runAsGroup: 1000
-                  runAsNonRoot: true
 
   # Patch workflow-controller-configmap to inject KFP_POD_NAME and KFP_POD_UID env vars
-  # and keep MinIO defaults
   - target:
       kind: ConfigMap
       name: workflow-controller-configmap
@@ -125,7 +125,7 @@ patches:
                         name: metadata-grpc-configmap
                         optional: true
                     - secretRef:
-                        name: mlpipeline-minio-artifact
+                        name: mlpipeline-seaweedfs-artifact
       - op: replace
         path: /data/executor
         value: |
