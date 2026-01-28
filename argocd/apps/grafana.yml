@@ -58,7 +58,7 @@ spec:
           ports:
             grafana: 3000
           nodePorts:
-            grafana: 30000
+            grafana: 30010
 
   destination:
     server: https://kubernetes.default.svc
