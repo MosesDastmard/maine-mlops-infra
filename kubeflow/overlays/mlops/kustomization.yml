@@ -139,6 +139,15 @@ patches:
         path: /data/defaultPipelineRoot
         value: "s3://kubeflow-pipelines/v2/artifacts"
 
+  # Patch pipeline-install-config to use external S3 bucket name
+  - target:
+      kind: ConfigMap
+      name: pipeline-install-config
+    patch: |
+      - op: replace
+        path: /data/bucketName
+        value: "kubeflow-pipelines"
+
   # Patch persistence agent for external S3
   - target:
       kind: Deployment
@@ -235,6 +244,9 @@ patches:
                     - name: AWS_S3_ENDPOINT
                       value: "https://eu2.contabostorage.com"
                   envFrom:
+                    - configMapRef:
+                        name: metadata-grpc-configmap
+                        optional: true
                     - secretRef:
                         name: mlpipeline-minio-artifact
       - op: replace
