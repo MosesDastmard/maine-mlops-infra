@@ -78,16 +78,20 @@ patches:
       kind: Deployment
       name: ml-pipeline
     patch: |
-      - op: replace
-        path: /spec/template/spec/containers/0/env/6
-        value:
-          name: OBJECTSTORECONFIG_HOST
-          value: "seaweedfs"
-      - op: replace
-        path: /spec/template/spec/containers/0/env/7
-        value:
-          name: OBJECTSTORECONFIG_PORT
-          value: "8333"
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: ml-pipeline
+      spec:
+        template:
+          spec:
+            containers:
+              - name: ml-pipeline-api-server
+                env:
+                  - name: OBJECTSTORECONFIG_HOST
+                    value: "seaweedfs"
+                  - name: OBJECTSTORECONFIG_PORT
+                    value: "8333"
 
   # Fix SeaweedFS permissions
   - target:
