@@ -53,7 +53,7 @@ patches:
         value: NodePort
       - op: add
         path: /spec/ports/0/nodePort
-        value: 30030
+        value: 30031
 
   # Pin ml-pipeline-ui to control-plane node for direct NodePort access
   - target:
