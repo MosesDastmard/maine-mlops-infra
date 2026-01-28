@@ -13,6 +13,7 @@ resources:
   - namespace.yml
   - rbac.yml
   - webhook-tls-secret.yml
+  - ml-pipeline-ui-ingress.yml
 
 # Replace kubeflow namespace references in ClusterRoleBindings
 replacements:
