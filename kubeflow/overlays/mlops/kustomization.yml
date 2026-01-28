@@ -56,7 +56,7 @@ patches:
         value: 3000
       - op: add
         path: /spec/ports/0/nodePort
-        value: 30000
+        value: 30030
 
   - target:
       kind: PersistentVolumeClaim
