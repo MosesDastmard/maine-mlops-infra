@@ -55,6 +55,16 @@ patches:
         path: /spec/ports/0/nodePort
         value: 30030
 
+  # Pin ml-pipeline-ui to control-plane node for direct NodePort access
+  - target:
+      kind: Deployment
+      name: ml-pipeline-ui
+    patch: |
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          kubernetes.io/hostname: vmi3021562
+
   # Use local-path storage class for MySQL PVC
   - target:
       kind: PersistentVolumeClaim
