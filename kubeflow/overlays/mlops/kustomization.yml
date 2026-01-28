@@ -244,9 +244,19 @@ patches:
                     - name: AWS_S3_ENDPOINT
                       value: "https://eu2.contabostorage.com"
                     - name: AWS_REGION
-                      value: "eu2"
+                      value: "westeurope"
                     - name: AWS_DEFAULT_REGION
-                      value: "eu2"
+                      value: "westeurope"
+                    - name: AWS_ACCESS_KEY_ID
+                      valueFrom:
+                        secretKeyRef:
+                          name: mlpipeline-minio-artifact
+                          key: accesskey
+                    - name: AWS_SECRET_ACCESS_KEY
+                      valueFrom:
+                        secretKeyRef:
+                          name: mlpipeline-minio-artifact
+                          key: secretkey
                   envFrom:
                     - configMapRef:
                         name: metadata-grpc-configmap
