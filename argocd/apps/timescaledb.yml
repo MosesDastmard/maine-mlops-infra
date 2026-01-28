@@ -31,6 +31,7 @@ spec:
           postgresPassword: 4k0pYu4JMcZlG8KPTimescaleAdmin!
           username: mlops
           password: 4k0pYu4JMcZlG8KPTimescale!
+          database: maine
 
         primary:
           podAnnotations:
