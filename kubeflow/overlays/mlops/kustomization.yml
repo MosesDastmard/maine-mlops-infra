@@ -15,7 +15,6 @@ resources:
   - rbac.yml
   - minio-external-service.yml
   - webhook-tls-secret.yml
-  - artifact-secret.yml
 
 # Replace kubeflow namespace references in ClusterRoleBindings
 replacements:
@@ -63,16 +62,17 @@ patches:
       metadata:
         name: minio-pvc
 
-  # Remove original mlpipeline-minio-artifact secret (we define our own with S3 creds)
+  # Patch mlpipeline-minio-artifact secret with our S3 credentials
+  # (instead of deleting, we replace the data)
   - target:
       kind: Secret
       name: mlpipeline-minio-artifact
     patch: |
-      $patch: delete
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: mlpipeline-minio-artifact
+      - op: replace
+        path: /stringData
+        value:
+          accesskey: "22b0f46d06e6e3b68428272ae9467e6c"
+          secretkey: "cef53ab2058a29fb76de4765e71cece1"
 
   # Patch ml-pipeline-api-server to use external S3
   - target:
