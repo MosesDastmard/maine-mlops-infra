@@ -243,10 +243,16 @@ patches:
                       value: "https://eu2.contabostorage.com"
                     - name: AWS_S3_ENDPOINT
                       value: "https://eu2.contabostorage.com"
+                    - name: AWS_ENDPOINT_URL
+                      value: "https://eu2.contabostorage.com"
                     - name: AWS_REGION
                       value: "westeurope"
                     - name: AWS_DEFAULT_REGION
                       value: "westeurope"
+                    - name: AWS_S3_FORCE_PATH_STYLE
+                      value: "true"
+                    - name: AWS_EC2_METADATA_DISABLED
+                      value: "true"
                     - name: AWS_ACCESS_KEY_ID
                       valueFrom:
                         secretKeyRef:
