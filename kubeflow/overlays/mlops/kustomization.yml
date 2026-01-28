@@ -9,7 +9,7 @@ kind: Kustomization
 namespace: mlops-kubeflow
 
 resources:
-  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.15.0
+  - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary-minio?ref=2.15.0
   - namespace.yml
   - rbac.yml
   - webhook-tls-secret.yml
