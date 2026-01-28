@@ -40,6 +40,14 @@ patches:
         path: /spec/template/spec/nodeSelector
         value:
           kubernetes.io/hostname: vmi3021562
+      - op: replace
+        path: /spec/template/spec/containers/0/ports/0/containerPort
+        value: 5000
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: PORT
+          value: "5000"
 
   - target:
       kind: Service
@@ -48,6 +56,12 @@ patches:
       - op: replace
         path: /spec/type
         value: NodePort
+      - op: replace
+        path: /spec/ports/0/port
+        value: 5000
+      - op: replace
+        path: /spec/ports/0/targetPort
+        value: 5000
       - op: add
         path: /spec/ports/0/nodePort
         value: 30000
