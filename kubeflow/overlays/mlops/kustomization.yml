@@ -10,10 +10,8 @@ namespace: mlops-kubeflow
 
 resources:
   - github.com/kubeflow/pipelines//manifests/kustomize/env/platform-agnostic-emissary?ref=2.4.0
-  - s3-secret.yml
   - namespace.yml
   - rbac.yml
-  - minio-external-service.yml
   - webhook-tls-secret.yml
 
 # Replace kubeflow namespace references in ClusterRoleBindings
@@ -29,151 +27,6 @@ replacements:
           - subjects.*.namespace
 
 patches:
-  # Remove minio deployment
-  - target:
-      kind: Deployment
-      name: minio
-    patch: |
-      $patch: delete
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: minio
-
-  # Remove minio service
-  - target:
-      kind: Service
-      name: minio-service
-    patch: |
-      $patch: delete
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: minio-service
-
-  # Remove minio PVC
-  - target:
-      kind: PersistentVolumeClaim
-      name: minio-pvc
-    patch: |
-      $patch: delete
-      apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: minio-pvc
-
-  # Patch mlpipeline-minio-artifact secret with our S3 credentials
-  # (instead of deleting, we replace the data)
-  - target:
-      kind: Secret
-      name: mlpipeline-minio-artifact
-    patch: |
-      - op: replace
-        path: /stringData
-        value:
-          accesskey: "22b0f46d06e6e3b68428272ae9467e6c"
-          secretkey: "cef53ab2058a29fb76de4765e71cece1"
-
-  # Patch ml-pipeline-api-server to use external S3
-  - target:
-      kind: Deployment
-      name: ml-pipeline
-    patch: |
-      - op: replace
-        path: /spec/template/spec/containers/0/env
-        value:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: OBJECTSTORECONFIG_HOST
-            value: "eu2.contabostorage.com"
-          - name: OBJECTSTORECONFIG_PORT
-            value: "443"
-          - name: OBJECTSTORECONFIG_SECURE
-            value: "true"
-          - name: OBJECTSTORECONFIG_BUCKETNAME
-            value: "kubeflow-pipelines"
-          - name: OBJECTSTORECONFIG_ACCESSKEY
-            valueFrom:
-              secretKeyRef:
-                name: kubeflow-s3-credentials
-                key: accessKeyID
-          - name: OBJECTSTORECONFIG_SECRETACCESSKEY
-            valueFrom:
-              secretKeyRef:
-                name: kubeflow-s3-credentials
-                key: secretAccessKey
-          - name: DBCONFIG_USER
-            valueFrom:
-              secretKeyRef:
-                name: mysql-secret
-                key: username
-          - name: DBCONFIG_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: mysql-secret
-                key: password
-          - name: DBCONFIG_DBNAME
-            value: mlpipeline
-          - name: DBCONFIG_HOST
-            value: mysql
-          - name: DBCONFIG_PORT
-            value: "3306"
-          # Provider config for kfp-launcher (used by pipeline pods to upload artifacts)
-          - name: MINIO_SERVICE_SERVICE_HOST
-            value: "eu2.contabostorage.com"
-          - name: MINIO_SERVICE_SERVICE_PORT
-            value: "443"
-          - name: V2_LAUNCHER_IMAGE
-            value: "ghcr.io/kubeflow/kfp-launcher:2.4.0"
-          - name: V2_DRIVER_IMAGE
-            value: "ghcr.io/kubeflow/kfp-driver:2.4.0"
-
-  # Patch kfp-launcher ConfigMap to use external S3
-  - target:
-      kind: ConfigMap
-      name: kfp-launcher
-    patch: |
-      - op: replace
-        path: /data/defaultPipelineRoot
-        value: "s3://kubeflow-pipelines/v2/artifacts"
-
-  # Patch pipeline-install-config to use external S3 bucket name
-  - target:
-      kind: ConfigMap
-      name: pipeline-install-config
-    patch: |
-      - op: replace
-        path: /data/bucketName
-        value: "kubeflow-pipelines"
-
-  # Patch persistence agent for external S3
-  - target:
-      kind: Deployment
-      name: ml-pipeline-persistenceagent
-    patch: |
-      - op: add
-        path: /spec/template/spec/containers/0/env/-
-        value:
-          name: OBJECTSTORECONFIG_HOST
-          value: "eu2.contabostorage.com"
-      - op: add
-        path: /spec/template/spec/containers/0/env/-
-        value:
-          name: OBJECTSTORECONFIG_PORT
-          value: "443"
-      - op: add
-        path: /spec/template/spec/containers/0/env/-
-        value:
-          name: OBJECTSTORECONFIG_SECURE
-          value: "true"
-      - op: add
-        path: /spec/template/spec/containers/0/env/-
-        value:
-          name: OBJECTSTORECONFIG_BUCKETNAME
-          value: "kubeflow-pipelines"
-
   # Patch ml-pipeline-ui to add MLMD envoy service connection env vars
   - target:
       kind: Deployment
@@ -212,7 +65,7 @@ patches:
         value: local-path
 
   # Patch workflow-controller-configmap to inject KFP_POD_NAME and KFP_POD_UID env vars
-  # and use external S3 for artifact repository
+  # and keep MinIO defaults
   - target:
       kind: ConfigMap
       name: workflow-controller-configmap
@@ -233,57 +86,12 @@ patches:
                       valueFrom:
                         fieldRef:
                           fieldPath: metadata.uid
-                    - name: MINIO_SERVICE_SERVICE_HOST
-                      value: "eu2.contabostorage.com"
-                    - name: MINIO_SERVICE_SERVICE_PORT
-                      value: "443"
-                    - name: MINIO_SERVICE_SECURE
-                      value: "true"
-                    - name: S3_ENDPOINT
-                      value: "https://eu2.contabostorage.com"
-                    - name: AWS_S3_ENDPOINT
-                      value: "https://eu2.contabostorage.com"
-                    - name: AWS_ENDPOINT_URL
-                      value: "https://eu2.contabostorage.com"
-                    - name: AWS_REGION
-                      value: "westeurope"
-                    - name: AWS_DEFAULT_REGION
-                      value: "westeurope"
-                    - name: AWS_S3_FORCE_PATH_STYLE
-                      value: "true"
-                    - name: AWS_EC2_METADATA_DISABLED
-                      value: "true"
-                    - name: AWS_ACCESS_KEY_ID
-                      valueFrom:
-                        secretKeyRef:
-                          name: mlpipeline-minio-artifact
-                          key: accesskey
-                    - name: AWS_SECRET_ACCESS_KEY
-                      valueFrom:
-                        secretKeyRef:
-                          name: mlpipeline-minio-artifact
-                          key: secretkey
                   envFrom:
                     - configMapRef:
                         name: metadata-grpc-configmap
                         optional: true
                     - secretRef:
                         name: mlpipeline-minio-artifact
-      - op: replace
-        path: /data/artifactRepository
-        value: |
-          archiveLogs: true
-          s3:
-            endpoint: "eu2.contabostorage.com"
-            bucket: "kubeflow-pipelines"
-            keyFormat: "artifacts/{{workflow.name}}/{{workflow.creationTimestamp.Y}}/{{workflow.creationTimestamp.m}}/{{workflow.creationTimestamp.d}}/{{pod.name}}"
-            insecure: false
-            accessKeySecret:
-              name: mlpipeline-minio-artifact
-              key: accesskey
-            secretKeySecret:
-              name: mlpipeline-minio-artifact
-              key: secretkey
       - op: replace
         path: /data/executor
         value: |
