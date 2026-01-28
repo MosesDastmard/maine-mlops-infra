@@ -73,6 +73,22 @@ patches:
         path: /spec/storageClassName
         value: local-path
 
+  # Fix ml-pipeline object store config for SeaweedFS in mlops-kubeflow namespace
+  - target:
+      kind: Deployment
+      name: ml-pipeline
+    patch: |
+      - op: replace
+        path: /spec/template/spec/containers/0/env/6
+        value:
+          name: OBJECTSTORECONFIG_HOST
+          value: "seaweedfs"
+      - op: replace
+        path: /spec/template/spec/containers/0/env/7
+        value:
+          name: OBJECTSTORECONFIG_PORT
+          value: "8333"
+
   # Fix SeaweedFS permissions
   - target:
       kind: Deployment
