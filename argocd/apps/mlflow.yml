@@ -48,10 +48,10 @@ spec:
               http: "30050"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "200m"
+              memory: "2Gi"
+              cpu: "500m"
             limits:
-              memory: "1Gi"
+              memory: "4Gi"
               cpu: "1000m"
 
         postgresql:
