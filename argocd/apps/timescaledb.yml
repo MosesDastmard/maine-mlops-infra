@@ -61,6 +61,7 @@ spec:
               memory: "4Gi"
               cpu: "2000m"
           configuration: |
+            listen_addresses = '*'
             shared_preload_libraries = 'timescaledb,pg_cron'
             cron.database_name = 'postgres'
             timescaledb.telemetry_level = 'off'
