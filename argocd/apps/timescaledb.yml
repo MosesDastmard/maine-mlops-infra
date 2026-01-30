@@ -55,11 +55,11 @@ spec:
             size: 50Gi
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "500m"
-            limits:
               memory: "4Gi"
               cpu: "2000m"
+            limits:
+              memory: "6Gi"
+              cpu: "4000m"
           configuration: |
             listen_addresses = '*'
             shared_preload_libraries = 'timescaledb,pg_cron'

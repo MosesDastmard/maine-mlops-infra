@@ -21,6 +21,13 @@ spec:
           prometheusSpec:
             retention: 7d
             retentionSize: 18GB
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "200m"
+              limits:
+                memory: "3Gi"
+                cpu: "1000m"
             storageSpec:
               volumeClaimTemplate:
                 spec:
