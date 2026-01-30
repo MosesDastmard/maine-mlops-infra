@@ -61,7 +61,7 @@ spec:
             shared_preload_libraries = 'timescaledb,pg_cron'
             cron.database_name = 'postgres'
             timescaledb.telemetry_level = 'off'
-            max_connections = 200
+            max_connections = 20
             shared_buffers = 1GB
             effective_cache_size = 3GB
             maintenance_work_mem = 512MB
@@ -71,7 +71,7 @@ spec:
             wal_buffers = 64MB
             min_wal_size = 512MB
             max_wal_size = 2GB
-            max_locks_per_transaction = 256
+            max_locks_per_transaction = 1024
 
         architecture: standalone
 
