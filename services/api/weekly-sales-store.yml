@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weekly-sales-store
+  namespace: services-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weekly-sales-store
+  template:
+    metadata:
+      labels:
+        app: weekly-sales-store
+    spec:
+      containers:
+      - name: weekly-sales-store
+        image: dastmard/maine-serve-weekly-sales-store:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "2000m"
+            memory: "2Gi"
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: MLFLOW_TRACKING_URI
+          value: "http://mlflow-tracking.mlops-mlflow.svc.cluster.local:5000"
+        - name: MLFLOW_USERNAME
+          value: "admin"
+        - name: MLFLOW_PASSWORD
+          value: "4k0pYu4JMcZlG8KPMLflow!"
+        - name: DB_HOST
+          value: "timescaledb-postgresql.mlops-timescaledb.svc.cluster.local"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "maine"
+        - name: DB_USER
+          value: "mlops"
+        - name: DB_PASSWORD
+          value: "4k0pYu4JMcZlG8KPTimescale!"
+        - name: DB_SCHEMA
+          value: "features"
+        - name: DB_TABLE
+          value: "weekly_sales_store"
+        - name: DB_CALEN
+          value: "weekly_calendar"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weekly-sales-store
+  namespace: services-api
+spec:
+  selector:
+    app: weekly-sales-store
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30800
+    protocol: TCP
+  type: NodePort

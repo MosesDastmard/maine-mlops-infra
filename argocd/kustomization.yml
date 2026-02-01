@@ -51,3 +51,4 @@ resources:
   # Custom Applications
   - apps/services-stream.yml
   - apps/services-sync.yml
+  - apps/services-api.yml

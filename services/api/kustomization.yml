@@ -1,0 +1,9 @@
+# Kustomization for services-api
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: services-api
+
+resources:
+  - namespace.yml
+  - weekly-sales-store.yml

@@ -1,0 +1,5 @@
+# Create namespace for API services
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: services-api
