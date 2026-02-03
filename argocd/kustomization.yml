@@ -28,6 +28,7 @@ resources:
 
   # CI/CD
   - apps/jenkins.yml
+  - apps/jenkins-resources.yml
 
   # Container Registry
   - apps/registry.yml

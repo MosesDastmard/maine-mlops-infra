@@ -28,7 +28,13 @@ spec:
           admin:
             username: admin
             password: 4k0pYu4JMcZlG8KP
-          installPlugins: false
+          installPlugins:
+            - kubernetes:4355.vb_3c9f94fc12e
+            - workflow-aggregator:608.v67378e9d3110
+            - git:5.7.0
+            - configuration-as-code:1932.v75cb_b_f1b_698d
+            - credentials-binding:696.v28c15ce88064
+            - generic-webhook-trigger:2.2.1
 
         agent:
           enabled: true

@@ -1,0 +1,26 @@
+# ArgoCD Application: Jenkins Resources (Secrets, RBAC)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jenkins-resources
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: mlops-infrastructure
+
+  source:
+    repoURL: https://github.com/dastmard/infra.git  # UPDATE: Your infra repo URL
+    path: jenkins
+    targetRevision: main
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mlops-jenkins
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
