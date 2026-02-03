@@ -29,6 +29,30 @@ spec:
             username: admin
             password: 4k0pYu4JMcZlG8KP
           installPlugins: false
+          initGroovyScripts:
+            01-create-admin.groovy: |
+              import jenkins.model.*
+              import hudson.security.*
+
+              def instance = Jenkins.get()
+              def adminUser = new File('/run/secrets/additional/chart-admin-username').text.trim()
+              def adminPass = new File('/run/secrets/additional/chart-admin-password').text.trim()
+
+              def realm = instance.getSecurityRealm()
+              if (!(realm instanceof HudsonPrivateSecurityRealm)) {
+                realm = new HudsonPrivateSecurityRealm(false)
+                instance.setSecurityRealm(realm)
+              }
+
+              def user = realm.getUser(adminUser)
+              if (user == null) {
+                realm.createAccount(adminUser, adminPass)
+              }
+
+              def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+              strategy.setAllowAnonymousRead(false)
+              instance.setAuthorizationStrategy(strategy)
+              instance.save()
 
         agent:
           enabled: true
